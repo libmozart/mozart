@@ -1,2 +1,1 @@
-# mozart
-Mozart++ Template Library
+# Mozart++ Template Library
