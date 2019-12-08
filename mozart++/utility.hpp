@@ -72,16 +72,16 @@
 namespace mozart {
 // Path seperator and delimiter
 #ifdef MOZART_PLATFORM_WIN32
-	constexpr char path_separator = '\\';
-	constexpr char path_delimiter = ';';
+    constexpr char path_separator = '\\';
+    constexpr char path_delimiter = ';';
 #else
-	constexpr char path_separator = '/';
-	constexpr char path_delimiter = ':';
+    constexpr char path_separator = '/';
+    constexpr char path_delimiter = ':';
 #endif
-	using byte_t = std::uint8_t;
-	using size_t = std::size_t;
+    using byte_t = std::uint8_t;
+    using size_t = std::size_t;
 }
 
 namespace mozart_impl {
-	// Not implemented yet
+// Not implemented yet
 }
