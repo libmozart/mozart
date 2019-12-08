@@ -30,3 +30,22 @@
 *.exe
 *.out
 *.app
+
+# Logs
+*.log
+
+# ImGui INI
+imgui.ini
+
+# IDE Configs
+.vs/
+.idea/
+.vscode/
+
+# Build Caches
+cmake-build-debug/
+cmake-build/
+build/
+
+# macOS Files
+.DS_Store
