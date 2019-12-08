@@ -67,6 +67,7 @@
  */
 
 #include <cstdint>
+#include <cstddef>
 
 namespace mozart
 {
