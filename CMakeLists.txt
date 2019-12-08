@@ -32,6 +32,7 @@ include_directories(mozart++)
 
 ## dummy target. DO NOT build this target directly or you will probably get an error.
 add_library(mozart++ STATIC
+        src/dummy.cpp
         mozart++/utility.hpp
         )
 set_target_properties(mozart++ PROPERTIES LINKER_LANGUAGE CXX)
