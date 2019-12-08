@@ -1,5 +1,7 @@
 /**
- * Mozart++ Template Library: Utility
+ * utility.hpp
+ *
+ * Mozart++ Template Library
  * Licensed under MIT License
  * Copyright (c) 2019 Covariant Institute
  * Website: https://covariant.cn/
@@ -32,45 +34,51 @@
 /**
  * Mozart++ Version: 19.12.1
  */
-
 #define __Mozart 191201L
 
-/**
- * Platform detection
- */
-
 #if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
+/**
+ * Platform: Microsoft Windows
+ */
 #define MOZART_PLATFORM_WIN32
 #define MOZART_PLATFORM_NAME "MS Win32"
 #endif
 
 #if defined(__linux) || defined(__linux__) || defined(linux)
+/**
+ * Platform: GNU/Linux
+ */
 #define MOZART_PLATFORM_LINUX
 #define MOZART_PLATFORM_NAME "GNU Linux"
 #endif
 
 #if defined(__APPLE__) || defined(__MACH__)
+/**
+ * Platform: Apple Darwin
+ */
 #define MOZART_PLATFORM_DARWIN
 #define MOZART_PLATFORM_NAME "Apple Darwin"
 #endif
 
+/**
+ * Platform definition for *nix.
+ */
 #if defined(MOZART_PLATFORM_LINUX) || defined(MOZART_PLATFORM_DARWIN)
 #define MOZART_PLATFORM_UNIX
 #endif
 
-/**
- * Namespace
- * ::mozart
- *      Standard Mozart++ Namespace
- * ::mozart_impl
- *      Mozart++ Implement Namespace
- */
-
 #include <cstdint>
 #include <cstddef>
 
+/**
+ * The namespace ::mozart contains standard mozart++ interfaces.
+ */
 namespace mozart {
-// Path seperator and delimiter
+    /**
+     * Path separator separates directory in a path.
+     * Path delimiter separates path in many paths.
+     */
+
 #ifdef MOZART_PLATFORM_WIN32
     constexpr char path_separator = '\\';
     constexpr char path_delimiter = ';';
@@ -78,10 +86,14 @@ namespace mozart {
     constexpr char path_separator = '/';
     constexpr char path_delimiter = ':';
 #endif
+
     using byte_t = std::uint8_t;
     using size_t = std::size_t;
 }
 
+/**
+ * The namespace ::mozart_impl contains mozart++ implementations.
+ */
 namespace mozart_impl {
 // Not implemented yet
 }
