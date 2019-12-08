@@ -12,3 +12,5 @@ mozart::byte_t *mozart::uninitialized_copy(byte_t *dest, byte_t *src, size_t cou
 {
     return reinterpret_cast<byte_t *>(memcpy(reinterpret_cast<void *>(dest), reinterpret_cast<void *>(src), count));
 }
+
+std::chrono::time_point<std::chrono::high_resolution_clock> mozart::timer::m_timer(std::chrono::high_resolution_clock::now());
