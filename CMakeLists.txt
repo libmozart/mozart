@@ -12,6 +12,7 @@ enable_testing()
 
 #### Check C++14
 check_cxx_compiler_flag("-std=c++14" COMPILER_SUPPORTS_CXX14)
+check_cxx_compiler_flag("/std:c++14" COMPILER_SUPPORTS_CXX14)
 if (COMPILER_SUPPORTS_CXX14)
     set(CMAKE_CXX_STANDARD 14)
 else ()
@@ -19,7 +20,8 @@ else ()
 endif ()
 
 #### Check C99
-check_c_compiler_flag("-std=c11" COMPILER_SUPPORTS_C99)
+check_c_compiler_flag("-std=c99" COMPILER_SUPPORTS_C99)
+check_c_compiler_flag("/std:c99" COMPILER_SUPPORTS_C99)
 if (COMPILER_SUPPORTS_C99)
     set(CMAKE_C_STANDARD 99)
 else ()
@@ -36,4 +38,3 @@ add_library(mozart++ STATIC
 set_target_properties(mozart++ PROPERTIES LINKER_LANGUAGE CXX)
 
 ## test targets here
-
