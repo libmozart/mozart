@@ -9,7 +9,7 @@
 #pragma once
 
 #ifndef __cplusplus
-    #error Please use cplusplus compiler such as g++ or clang++
+#error Please use cplusplus compiler such as g++ or clang++
 #endif
 
 /**
@@ -22,11 +22,11 @@
  */
 
 #ifndef _MSC_VER
-    #if __cplusplus < 201402L
-        #error Please use newer cplusplus compiler fully supports C++14 standard
-    #endif
+#if __cplusplus < 201402L
+#error Please use newer cplusplus compiler fully supports C++14 standard
+#endif
 #else
-    #warning Can not detect C++ standard version with MSVC Compiler automatically, please using C++14 or newer standard
+#warning Can not detect C++ standard version with MSVC Compiler automatically, please using C++14 or newer standard
 #endif
 
 /**
@@ -69,21 +69,19 @@
 #include <cstdint>
 #include <cstddef>
 
-namespace mozart
-{
+namespace mozart {
 // Path seperator and delimiter
 #ifdef MOZART_PLATFORM_WIN32
-	constexpr char path_separator = '\\';
-	constexpr char path_delimiter = ';';
+    constexpr char path_separator = '\\';
+    constexpr char path_delimiter = ';';
 #else
-	constexpr char path_separator = '/';
-	constexpr char path_delimiter = ':';
+    constexpr char path_separator = '/';
+    constexpr char path_delimiter = ':';
 #endif
     using byte_t = std::uint8_t;
     using size_t = std::size_t;
 }
 
-namespace mozart_impl
-{
-    // Not implemented yet
+namespace mozart_impl {
+// Not implemented yet
 }
