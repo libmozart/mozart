@@ -1,5 +1,5 @@
 /**
- * Mozart++ Template Library: Utility
+ * Mozart++ Template Library
  * Licensed under MIT License
  * Copyright (c) 2019 Covariant Institute
  * Website: https://covariant.cn/
@@ -66,8 +66,46 @@
  *      Mozart++ Implement Namespace
  */
 
+#include <type_traits>
+#include <cstring>
 #include <cstdint>
 #include <cstddef>
+#include <utility>
+
+/**
+ * Mozart++ Log System
+ *
+ * use MOZART_LOGEV(message) to log a normal event
+ * use MOZART_LOGCR(message) to log a critical event
+ *
+ * define MOZART_DEBUG to enable the log
+ * define MOZART_LOGCR_ONLY to disable normal events
+ *
+ * All macros must be defined before include
+ */
+
+#ifdef MOZART_DEBUG
+
+#include <cstdio>
+
+#ifndef MOZART_LOGCR_ONLY
+// Event Log
+#define MOZART_LOGEV(msg) ::printf("EV[%s] In file %s:%d: %s\n", __TIME__, __FILE__, __LINE__, msg);
+
+#else
+
+#define MOZART_LOGEV(msg)
+
+#endif
+// Critical Event Log
+#define MOZART_LOGCR(msg) ::printf("CR[%s] In file %s:%d: %s\n", __TIME__, __FILE__, __LINE__, msg);
+
+#else
+
+#define MOZART_LOGEV(msg)
+#define MOZART_LOGCR(msg)
+
+#endif
 
 namespace mozart {
 // Path seperator and delimiter
@@ -79,7 +117,28 @@ namespace mozart {
     constexpr char path_delimiter = ':';
 #endif
     using byte_t = std::uint8_t;
-    using size_t = std::size_t;
+// Type importing
+    using std::size_t;
+// Function importing
+    using std::declval;
+    using std::forward;
+    using std::memcpy;
+    using std::move;
+    using std::swap;
+// Alignment
+    template<typename type> using aligned_type = typename std::aligned_storage<sizeof(type), std::alignment_of<type>::value>::type;
+    template<size_t len, typename ...types> using aligned_union = typename std::aligned_union<len, types...>::type;
+    inline byte_t *uninitialized_copy(byte_t *, byte_t *, size_t) noexcept;
+    template<typename T, typename ...Args>
+    inline static void construct_at(byte_t *ptr, Args &&...args)
+    {
+        ::new (ptr) T(forward<Args>(args)...);
+    }
+    template<typename T>
+    inline static void destroy_at(byte_t *ptr)
+    {
+        reinterpret_cast<T *>(ptr)->~T();
+    }
 }
 
 namespace mozart_impl {
