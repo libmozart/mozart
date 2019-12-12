@@ -146,8 +146,7 @@ namespace mpp {
         reinterpret_cast<T *>(ptr)->~T();
     }
 
-    class object
-    {
+    class object {
     public:
         constexpr object() = default;
         object(const object&) = default;
@@ -157,8 +156,7 @@ namespace mpp {
         object& operator=(object&&) = default;
     };
 
-    class nocopyable
-    {
+    class nocopyable {
     public:
         nocopyable() = default;
         nocopyable(const nocopyable&) = delete;
@@ -168,8 +166,7 @@ namespace mpp {
         nocopyable& operator=(nocopyable&&) = default;
     };
 
-    class nomovable
-    {
+    class nomovable {
     public:
         nomovable() = default;
         nomovable(const nomovable&) = default;
