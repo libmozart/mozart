@@ -2,3 +2,4 @@
 
 #inlcude <mozart++/core/base.hpp>
 #include <mozart++/core/utility.hpp>
+#include <mozart++/string/string.hpp>
