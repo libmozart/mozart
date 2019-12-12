@@ -60,9 +60,9 @@
 
 /**
  * Namespace
- * ::mozart
+ * ::mpp
  *      Standard Mozart++ Namespace
- * ::mozart_impl
+ * ::mpp_impl
  *      Mozart++ Implement Namespace
  */
 
@@ -107,7 +107,7 @@
 
 #endif
 
-namespace mozart {
+namespace mpp {
 // Path seperator and delimiter
 #ifdef MOZART_PLATFORM_WIN32
     constexpr char path_separator = '\\';
@@ -141,6 +141,6 @@ namespace mozart {
     }
 }
 
-namespace mozart_impl {
+namespace mpp_impl {
 // Not implemented yet
 }

@@ -13,7 +13,7 @@
 #include <chrono>
 #include <thread>
 
-namespace mozart {
+namespace mpp {
     class timer final {
         static std::chrono::time_point<std::chrono::high_resolution_clock> m_timer;
 
