@@ -9,7 +9,7 @@
 #pragma once
 
 #include <mozart++/core/base.hpp>
-#include <functional>
+#include <mozart++/function>
 #include <chrono>
 #include <thread>
 
@@ -79,7 +79,7 @@ namespace mpp {
             }
         }
 
-        static size_t measure(const std::function<void()> &func, time_unit unit = time_unit::milliseconds)
+        static size_t measure(const function<void()> &func, time_unit unit = time_unit::milliseconds)
         {
             size_t begin(0), end(0);
             begin = time(unit);

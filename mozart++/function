@@ -1,4 +1,8 @@
 // -*- C++ -*- forwarding header
 
 #include <mozart++/core/base.hpp>
-#include <mozart++/core/utility.hpp>
+#include <functional>
+
+namespace mpp {
+    using std::function;
+}
