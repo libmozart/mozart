@@ -5,4 +5,16 @@
 
 namespace mpp {
     using std::function;
+
+    template <typename Handler>
+    struct function_parser : public function_parser<decltype(&Handler::operator())> {
+    };
+
+    template <typename ClassType, typename R, typename... Args>
+    struct function_parser<R(ClassType::*)(Args...) const> {
+        using function_type = mpp::function<R(Args...)>;
+    };
+
+    template <typename Handler>
+    using function_type = typename function_parser<Handler>::function_type;
 }

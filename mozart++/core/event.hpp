@@ -24,18 +24,6 @@ namespace mpp {
         std::unordered_map<std::string, std::list<std::shared_ptr<char>>> _event;
 
         template <typename Handler>
-        struct function_parser : public function_parser<decltype(&Handler::operator())> {
-        };
-
-        template <typename ClassType, typename R, typename... Args>
-        struct function_parser<R(ClassType::*)(Args...) const> {
-            using function_type = mpp::function<R(Args...)>;
-        };
-
-        template <typename Handler>
-        using function_type = typename function_parser<Handler>::function_type;
-
-        template <typename Handler>
         function_type<Handler> make_wrapper(Handler &cb) {
             return static_cast<function_type<Handler>>(cb);
         }
