@@ -42,3 +42,4 @@ set_target_properties(mozart++ PROPERTIES LINKER_LANGUAGE CXX)
 
 ## test targets here
 add_executable(test-optional tests/test-optional.cpp)
+add_executable(test-event tests/test-event.cpp)
