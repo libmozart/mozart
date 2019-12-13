@@ -28,13 +28,17 @@ else ()
     message(FATAL "The compiler ${CMAKE_C_COMPILER} has no C99 support. Please use a different C compiler.")
 endif ()
 
-include_directories(mozart++)
+include_directories(.)
+
+aux_source_directory(./mozart++ SRCS)
+aux_source_directory(./src SRCS_IMPL)
 
 ## dummy target. DO NOT build this target directly or you will probably get an error.
 add_library(mozart++ STATIC
-        src/dummy.cpp
-        mozart++/utility.hpp
+        ${SRCS}
+        ${SRCS_IMPL}
         )
 set_target_properties(mozart++ PROPERTIES LINKER_LANGUAGE CXX)
 
 ## test targets here
+add_executable(test-optional tests/test-optional.cpp)
