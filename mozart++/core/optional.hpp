@@ -30,7 +30,8 @@ namespace mpp {
          * @param t object
          * @return wrapped optional
          */
-        static optional<T> from(const T &t) {
+        static optional<T> from(const T &t)
+        {
             return optional<T>(t);
         }
 
@@ -40,7 +41,8 @@ namespace mpp {
          * @param t object
          * @return wrapped optional
          */
-        static optional<T> from(T &&t) {
+        static optional<T> from(T &&t)
+        {
             return optional<T>(std::forward<T>(t));
         }
 
@@ -52,7 +54,8 @@ namespace mpp {
          * @return wrapped optional
          */
         template <typename ...Args>
-        static optional<T> emplace(Args &&...args) {
+        static optional<T> emplace(Args &&...args)
+        {
             return optional<T>(T{std::forward<Args>(args)...});
         }
 
@@ -61,42 +64,49 @@ namespace mpp {
          *
          * @return wrapped optional
          */
-        static optional<T> none() {
+        static optional<T> none()
+        {
             return optional<T>();
         }
 
     public:
         optional() = default;
 
-        explicit optional(const T &t) {
+        explicit optional(const T &t)
+        {
             new(_memory.data() + 1) T(t);
             _memory[0] = static_cast<unsigned char>(true);
         }
 
-        explicit optional(T &&t) {
+        explicit optional(T &&t)
+        {
             new(_memory.data() + 1) T(std::forward<T>(t));
             _memory[0] = static_cast<unsigned char>(true);
         }
 
-        optional(const optional<T> &other) {
+        optional(const optional<T> &other)
+        {
             if (other.has_value()) {
                 new(_memory.data() + 1) T(other.get());
                 _memory[0] = static_cast<unsigned char>(true);
             }
         }
 
-        optional(optional<T> &&other) noexcept {
+        optional(optional<T> &&other) noexcept
+        {
             swap(other);
         }
 
-        ~optional() {
+        ~optional()
+        {
             if (has_value()) {
                 ptr()->~T();
                 _memory[0] = static_cast<unsigned char>(false);
             }
         }
 
-        optional &operator=(const optional<T> &other) {
+        optional &operator=(const optional<T> &other)
+        {
             if (this == &other) {
                 return *this;
             }
@@ -106,7 +116,8 @@ namespace mpp {
             return *this;
         }
 
-        optional &operator=(optional<T> &&other) noexcept {
+        optional &operator=(optional<T> &&other) noexcept
+        {
             if (this == &other) {
                 return *this;
             }
@@ -115,11 +126,13 @@ namespace mpp {
             return *this;
         }
 
-        void swap(optional<T> &&other) {
+        void swap(optional<T> &&other)
+        {
             std::swap(this->_memory, other._memory);
         }
 
-        void swap(optional<T> &other) {
+        void swap(optional<T> &other)
+        {
             std::swap(this->_memory, other._memory);
         }
 
@@ -132,7 +145,8 @@ namespace mpp {
          *
          * @return pointer to the object
          */
-        T *ptr() {
+        T *ptr()
+        {
             return has_value() ? reinterpret_cast<T *>(_memory.data() + 1) : nullptr;
         }
 
@@ -145,7 +159,8 @@ namespace mpp {
          *
          * @return pointer to the object
          */
-        const T *ptr() const {
+        const T *ptr() const
+        {
             return has_value() ? reinterpret_cast<const T *>(_memory.data() + 1) : nullptr;
         }
 
@@ -158,7 +173,8 @@ namespace mpp {
          *
          * @return reference to the object
          */
-        T &get() {
+        T &get()
+        {
             return *ptr();
         }
 
@@ -171,7 +187,8 @@ namespace mpp {
          *
          * @return reference to the object
          */
-        const T &get() const {
+        const T &get() const
+        {
             return *ptr();
         }
 
@@ -184,7 +201,8 @@ namespace mpp {
          * @param o default value
          * @return reference to the object or to the default object
          */
-        T &get_or(T &o) {
+        T &get_or(T &o)
+        {
             if (ptr() == nullptr) {
                 return o;
             }
@@ -200,7 +218,8 @@ namespace mpp {
          * @param o default value
          * @return reference to the object or to the default object
          */
-        const T &get_or(T &o) const {
+        const T &get_or(T &o) const
+        {
             if (ptr() == nullptr) {
                 return o;
             }
@@ -215,7 +234,8 @@ namespace mpp {
          *
          * @param consumer The object receiver
          */
-        void apply(const std::function<void(T &)> &consumer) {
+        void apply(const std::function<void(T &)> &consumer)
+        {
             if (ptr() != nullptr) {
                 consumer(get());
             }
@@ -229,7 +249,8 @@ namespace mpp {
          *
          * @param consumer The object receiver
          */
-        void apply(const std::function<void(const T &)> &consumer) const {
+        void apply(const std::function<void(const T &)> &consumer) const
+        {
             if (ptr() != nullptr) {
                 consumer(get());
             }
@@ -245,7 +266,8 @@ namespace mpp {
          * @param consumer The object receiver
          */
         template <typename R>
-        R apply_or(const R &r, const std::function<R(T &)> &consumer) {
+        R apply_or(const R &r, const std::function<R(T &)> &consumer)
+        {
             if (ptr() != nullptr) {
                 return consumer(get());
             }
@@ -262,7 +284,8 @@ namespace mpp {
          * @param consumer The object receiver
          */
         template <typename R>
-        R apply_or(const R &r, const std::function<R(const T &)> &consumer) const {
+        R apply_or(const R &r, const std::function<R(const T &)> &consumer) const
+        {
             if (ptr() != nullptr) {
                 return consumer(get());
             }
@@ -274,7 +297,8 @@ namespace mpp {
          *
          * @return true if the wrapped object is not nullptr.
          */
-        bool has_value() const {
+        bool has_value() const
+        {
             return static_cast<bool>(_memory[0]);
         }
     };
