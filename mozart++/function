@@ -1,0 +1,8 @@
+// -*- C++ -*- forwarding header
+
+#include <mozart++/core/base.hpp>
+#include <functional>
+
+namespace mpp {
+    using std::function;
+}
