@@ -145,6 +145,41 @@ namespace mpp {
     {
         reinterpret_cast<T *>(ptr)->~T();
     }
+
+    class object {
+    public:
+        constexpr object() = default;
+        object(const object&) = default;
+        object(object&&) noexcept = default;
+        virtual ~object() = default;
+        object& operator=(const object&) = default;
+        object& operator=(object&&) = default;
+    };
+
+    class nocopyable {
+    public:
+        nocopyable() = default;
+        nocopyable(const nocopyable&) = delete;
+        nocopyable(nocopyable&&) noexcept = default;
+        ~nocopyable() = default;
+        nocopyable& operator=(const nocopyable&) = delete;
+        nocopyable& operator=(nocopyable&&) = default;
+    };
+
+    class nomovable {
+    public:
+        nomovable() = default;
+        nomovable(const nomovable&) = default;
+        nomovable(nomovable&&) noexcept = delete;
+        ~nomovable() = default;
+        nomovable& operator=(const nomovable&) = default;
+        nomovable& operator=(nomovable&&) = delete;
+    };
+
+    class singleton : public object, public nocopyable, public nomovable {
+    protected:
+        singleton() = default;
+    };
 }
 
 namespace mpp_impl {
