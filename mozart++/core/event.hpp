@@ -24,20 +24,20 @@ namespace mpp {
         std::unordered_map<std::string, std::list<std::shared_ptr<char>>> _event;
 
         template <typename Handler>
-        struct FunctionParser : public FunctionParser<decltype(&Handler::operator())> {
+        struct function_parser : public function_parser<decltype(&Handler::operator())> {
         };
 
         template <typename ClassType, typename R, typename... Args>
-        struct FunctionParser<R(ClassType::*)(Args...) const> {
-            using FunctionType = mpp::function<R(Args...)>;
+        struct function_parser<R(ClassType::*)(Args...) const> {
+            using function_type = mpp::function<R(Args...)>;
         };
 
         template <typename Handler>
-        using FunctionType = typename FunctionParser<Handler>::FunctionType;
+        using function_type = typename function_parser<Handler>::function_type;
 
         template <typename Handler>
-        FunctionType<Handler> makeFunction(Handler &cb) {
-            return static_cast<FunctionType<Handler>>(cb);
+        function_type<Handler> make_wrapper(Handler &cb) {
+            return static_cast<function_type<Handler>>(cb);
         }
 
     public:
@@ -54,9 +54,9 @@ namespace mpp {
          */
         template <typename Handler>
         void on(const std::string &name, Handler handler) {
-            using WrapperType = decltype(makeFunction(handler));
+            using wrapper_type = decltype(make_wrapper(handler));
 
-            auto *m = std::malloc(sizeof(WrapperType));
+            auto *m = std::malloc(sizeof(wrapper_type));
             if (m == nullptr) {
                 // should panic oom
                 return;
@@ -65,7 +65,7 @@ namespace mpp {
             // generate the handler wrapper dynamically according to
             // the callback type, so we can pass varied and arbitrary
             // count of arguments to trigger the event handler.
-            auto fn = new(m) WrapperType(makeFunction(handler));
+            auto fn = new(m) wrapper_type(make_wrapper(handler));
 
             // use std::shared_ptr to manage the allocated memory
             // (char *) and (void *) are known as universal pointers.
@@ -76,7 +76,7 @@ namespace mpp {
                 // wrapper function deleter, responsible to call destructor
                 [](char *ptr) {
                     if (ptr != nullptr) {
-                        reinterpret_cast<WrapperType *>(ptr)->~WrapperType();
+                        reinterpret_cast<wrapper_type *>(ptr)->~wrapper_type();
                         std::free(ptr);
                     }
                 }
