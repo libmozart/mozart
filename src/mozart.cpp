@@ -16,3 +16,7 @@ mpp::byte_t *mpp::uninitialized_copy(byte_t *dest, byte_t *src, size_t count) no
 
 std::chrono::time_point<std::chrono::high_resolution_clock>
     mpp::timer::m_timer(std::chrono::high_resolution_clock::now());
+
+template<typename T>
+cs::shared::any::default_allocator<cs::shared::any::stor_impl<T>> cs::shared::any::stor_impl<T>::allocator;
+
