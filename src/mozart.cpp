@@ -18,5 +18,6 @@ std::chrono::time_point<std::chrono::high_resolution_clock>
     mpp::timer::m_timer(std::chrono::high_resolution_clock::now());
 
 template<typename T>
-cs::shared::any::default_allocator<cs::shared::any::stor_impl<T>> cs::shared::any::stor_impl<T>::allocator;
+mpp::any::default_allocator<mpp::any::stor_impl<T>> mpp::any::stor_impl<T>::allocator;
 
+std::wstring_convert<std::codecvt_utf8<wchar_t>> mpp::codecvt::conv;
