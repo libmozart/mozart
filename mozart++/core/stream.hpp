@@ -108,7 +108,7 @@ namespace mpp {
 
         stream<T> &operator=(const stream<T> &rhs) {
             if (this != &rhs) {
-                this->stream();
+                this->~stream();
                 new(this) stream(rhs);
             }
             return *this;
