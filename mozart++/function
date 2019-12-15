@@ -1,4 +1,5 @@
 // -*- C++ -*- forwarding header
+#pragma once
 
 #include <mozart++/core/base.hpp>
 #include <functional>
