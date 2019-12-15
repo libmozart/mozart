@@ -6,6 +6,18 @@
 namespace mpp {
     using std::function;
 
+    template <typename A, typename B, typename C>
+    static mpp::function<C(A)> compose(const mpp::function<C(B)> &f,
+                                       const mpp::function<B(A)> &g) {
+        return std::bind(f, std::bind(g, std::placeholders::_1));
+    }
+
+    template <typename A>
+    static mpp::function<bool(A)> boolean_compose(const mpp::function<bool(A)> &f,
+                                                  const mpp::function<bool(A)> &g) {
+        return [=](A x) { return f(x) && g(x); };
+    }
+
     template <typename Handler>
     struct function_parser : public function_parser<decltype(&Handler::operator())> {
     };
