@@ -260,6 +260,7 @@ namespace mpp {
     public:
         /**
          * Construct a stream by repeating a value.
+         *
          * @param head
          * @return stream
          */
@@ -269,6 +270,7 @@ namespace mpp {
 
         /**
          * Construct a stream by repeatedly applying a function.
+         *
          * @param head The first element
          * @param iterator The mapper function
          * @return stream
@@ -279,6 +281,7 @@ namespace mpp {
 
         /**
          * Construct a stream from a list.
+         *
          * @param list The list
          * @return stream
          */
@@ -290,6 +293,7 @@ namespace mpp {
 
         /**
          * Construct a stream from a list.
+         *
          * @param list The list
          * @return stream
          */
@@ -300,10 +304,11 @@ namespace mpp {
         }
 
         /**
-        * Construct a stream from a list.
-        * @param list The list
-        * @return stream
-        */
+         * Construct a stream from a list.
+         *
+         * @param list The list
+         * @return stream
+         */
         static stream<T> of(const std::deque<T> &list) {
             std::deque<T> d;
             std::copy(list.begin(), list.end(), std::back_inserter(d));
