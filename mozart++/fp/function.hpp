@@ -26,8 +26,8 @@ namespace mpp {
         return [=](A x) { return f(x) && g(x); };
     }
 
-    template <typename Handler>
-    struct function_parser : public function_parser<decltype(&Handler::operator())> {
+    template <typename F>
+    struct function_parser : public function_parser<decltype(&F::operator())> {
     };
 
     template <typename ClassType, typename R, typename... Args>
@@ -35,6 +35,6 @@ namespace mpp {
         using function_type = mpp::function<R(Args...)>;
     };
 
-    template <typename Handler>
-    using function_type = typename function_parser<Handler>::function_type;
+    template <typename F>
+    using function_type = typename function_parser<F>::function_type;
 }
