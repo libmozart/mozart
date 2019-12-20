@@ -309,10 +309,8 @@ namespace mpp {
          * @param list The list
          * @return stream
          */
-        static stream<T> of(const std::deque<T> &list) {
-            std::deque<T> d;
-            std::copy(list.begin(), list.end(), std::back_inserter(d));
-            return stream<T>(std::move(d));
+        static stream<T> of(std::deque<T> list) {
+            return stream<T>(std::move(list));
         }
     };
 }
