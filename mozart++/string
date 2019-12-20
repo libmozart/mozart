@@ -1,3 +1,0 @@
-// -*- C++ -*- forwarding header
-
-#include <mozart++/core/string.hpp>

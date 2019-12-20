@@ -2,3 +2,5 @@
 
 #include <mozart++/core/base.hpp>
 #include <mozart++/core/utility.hpp>
+#include <mozart++/string/string.hpp>
+#include <mozart++/string/codecvt.hpp>
