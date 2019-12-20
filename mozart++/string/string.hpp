@@ -316,10 +316,6 @@ namespace mpp {
             return std::string(_data, _length);
         }
 
-        const char *printable() const {
-            return str().c_str();
-        }
-
         /**
          * Check if this string starts with the given prefix.
          * @param prefix
