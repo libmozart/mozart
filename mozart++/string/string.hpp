@@ -67,10 +67,10 @@ namespace mpp {
             return std::char_traits<char>::length(str);
         }
 
-        static int ascii_strncasecmp(const char *lhs, const char *rhs, size_t Length) {
-            for (size_t I = 0; I < Length; ++I) {
-                unsigned char lw = std::tolower(lhs[I]);
-                unsigned char rw = std::tolower(rhs[I]);
+        static int ascii_strncasecmp(const char *lhs, const char *rhs, size_t length) {
+            for (size_t index = 0; index < length; ++index) {
+                unsigned char lw = std::tolower(lhs[index]);
+                unsigned char rw = std::tolower(rhs[index]);
                 if (lw != rw) {
                     return lw < rw ? -1 : 1;
                 }
@@ -91,10 +91,10 @@ namespace mpp {
         }
 
     public:
-        char operator[](size_t Index) const {
+        char operator[](size_t index) const {
             // TODO: replace with exception handling system.
-            assert(Index < _length && "Invalid index!");
-            return _data[Index];
+            assert(index < _length && "Invalid index!");
+            return _data[index];
         }
 
         /**
