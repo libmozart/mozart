@@ -29,7 +29,7 @@ namespace mpp {
      */
     class string_ref {
     public:
-        static const size_t npos = ~size_t(0);
+        static constexpr size_t npos = ~size_t(0);
 
         using iterator = const char *;
         using const_iterator = const char *;
