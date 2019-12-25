@@ -13,7 +13,7 @@
 #include <functional>
 
 namespace mpp {
-    template <typename T>
+    template<typename T>
     class optional {
     private:
         /**
@@ -51,7 +51,7 @@ namespace mpp {
          * @param args argument values
          * @return wrapped optional
          */
-        template <typename ...Args>
+        template<typename ...Args>
         static optional<T> emplace(Args &&...args) {
             return optional<T>(T{std::forward<Args>(args)...});
         }
@@ -244,7 +244,7 @@ namespace mpp {
          * @param r default value
          * @param consumer The object receiver
          */
-        template <typename R>
+        template<typename R>
         R apply_or(const R &r, const std::function<R(T &)> &consumer) {
             if (ptr() != nullptr) {
                 return consumer(get());
@@ -261,7 +261,7 @@ namespace mpp {
          * @param r default value
          * @param consumer The object receiver
          */
-        template <typename R>
+        template<typename R>
         R apply_or(const R &r, const std::function<R(const T &)> &consumer) const {
             if (ptr() != nullptr) {
                 return consumer(get());

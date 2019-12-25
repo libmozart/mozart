@@ -127,53 +127,66 @@ namespace mpp {
     using std::swap;
 // Alignment
     template<typename type> using aligned_type =
-        typename std::aligned_storage<sizeof(type), std::alignment_of<type>::value>::type;
+    typename std::aligned_storage<sizeof(type), std::alignment_of<type>::value>::type;
 
     template<size_t len, typename ...types> using aligned_union =
-        typename std::aligned_union<len, types...>::type;
+    typename std::aligned_union<len, types...>::type;
 
     inline byte_t *uninitialized_copy(byte_t *, byte_t *, size_t) noexcept;
 
     template<typename T, typename ...Args>
-    inline static void construct_at(byte_t *ptr, Args &&...args)
-    {
-        ::new (ptr) T(forward<Args>(args)...);
+    inline static void construct_at(byte_t *ptr, Args &&...args) {
+        ::new(ptr) T(forward<Args>(args)...);
     }
 
     template<typename T>
-    inline static void destroy_at(byte_t *ptr)
-    {
+    inline static void destroy_at(byte_t *ptr) {
         reinterpret_cast<T *>(ptr)->~T();
     }
 
     class object {
     public:
         constexpr object() = default;
-        object(const object&) = default;
-        object(object&&) noexcept = default;
+
+        object(const object &) = default;
+
+        object(object &&) noexcept = default;
+
         virtual ~object() = default;
-        object& operator=(const object&) = default;
-        object& operator=(object&&) = default;
+
+        object &operator=(const object &) = default;
+
+        object &operator=(object &&) = default;
     };
 
     class nocopyable {
     public:
         nocopyable() = default;
-        nocopyable(const nocopyable&) = delete;
-        nocopyable(nocopyable&&) noexcept = default;
+
+        nocopyable(const nocopyable &) = delete;
+
+        nocopyable(nocopyable &&) noexcept = default;
+
         ~nocopyable() = default;
-        nocopyable& operator=(const nocopyable&) = delete;
-        nocopyable& operator=(nocopyable&&) = default;
+
+        nocopyable &operator=(const nocopyable &) = delete;
+
+        nocopyable &operator=(nocopyable &&) = default;
     };
 
     class nomovable {
     public:
         nomovable() = default;
-        nomovable(const nomovable&) = default;
-        nomovable(nomovable&&) noexcept = delete;
+
+        nomovable(const nomovable &) = default;
+
+        nomovable(nomovable &&) noexcept = delete;
+
         ~nomovable() = default;
-        nomovable& operator=(const nomovable&) = default;
-        nomovable& operator=(nomovable&&) = delete;
+
+        nomovable &operator=(const nomovable &) = default;
+
+        nomovable &operator=(nomovable &&) = delete;
     };
 
     class singleton : public object, public nocopyable, public nomovable {

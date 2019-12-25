@@ -24,7 +24,7 @@ namespace mpp {
     private:
         std::unordered_map<std::string, std::list<std::shared_ptr<char>>> _event;
 
-        template <typename Handler>
+        template<typename Handler>
         function_type<Handler> make_wrapper(Handler &cb) {
             return static_cast<function_type<Handler>>(cb);
         }
@@ -41,7 +41,7 @@ namespace mpp {
          * @param name Event name
          * @param handler Event handler
          */
-        template <typename Handler>
+        template<typename Handler>
         void on(const std::string &name, Handler handler) {
             using wrapper_type = decltype(make_wrapper(handler));
 
@@ -59,16 +59,16 @@ namespace mpp {
             // use std::shared_ptr to manage the allocated memory
             // (char *) and (void *) are known as universal pointers.
             _event[name].push_back(std::shared_ptr<char>(
-                // wrapper function itself
-                reinterpret_cast<char *>(fn),
+                    // wrapper function itself
+                    reinterpret_cast<char *>(fn),
 
-                // wrapper function deleter, responsible to call destructor
-                [](char *ptr) {
-                    if (ptr != nullptr) {
-                        reinterpret_cast<wrapper_type *>(ptr)->~wrapper_type();
-                        std::free(ptr);
+                    // wrapper function deleter, responsible to call destructor
+                    [](char *ptr) {
+                        if (ptr != nullptr) {
+                            reinterpret_cast<wrapper_type *>(ptr)->~wrapper_type();
+                            std::free(ptr);
+                        }
                     }
-                }
             ));
         }
 
@@ -91,7 +91,7 @@ namespace mpp {
          * @param name Event name
          * @param args Event handler arguments
          */
-        template <typename ...Args>
+        template<typename ...Args>
         void emit(const std::string &name, Args ...args) {
             auto it = _event.find(name);
             if (it != _event.end()) {
