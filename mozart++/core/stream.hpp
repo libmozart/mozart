@@ -20,10 +20,10 @@ namespace mpp {
      *
      * @tparam T Element type
      */
-    template <typename T>
+    template<typename T>
     class stream {
     public:
-        template <typename R>
+        template<typename R>
         using mapper_type = mpp::function<R(T x)>;
 
         using predicate_type = mapper_type<bool>;
@@ -81,22 +81,22 @@ namespace mpp {
         }
 
         explicit stream(const T &head)
-            : _head(head),
-              _remaining(true),
-              _finite_stream(false),
-              _producer([](T x) { return x; }),
-              _predicate([](T x) { return true; }),
-              _mapper([](T x) { return x; }) {
+                : _head(head),
+                  _remaining(true),
+                  _finite_stream(false),
+                  _producer([](T x) { return x; }),
+                  _predicate([](T x) { return true; }),
+                  _mapper([](T x) { return x; }) {
         }
 
         explicit stream(std::deque<T> list)
-            : _head(),
-              _finite_data(std::move(list)),
-              _finite_stream(true),
-              _remaining(!_finite_data.empty()),
-              _producer([](T x) { return x; }),
-              _predicate([](T x) { return true; }),
-              _mapper([](T x) { return x; }) {
+                : _head(),
+                  _finite_data(std::move(list)),
+                  _finite_stream(true),
+                  _remaining(!_finite_data.empty()),
+                  _producer([](T x) { return x; }),
+                  _predicate([](T x) { return true; }),
+                  _mapper([](T x) { return x; }) {
             // Bind the head to the first element of list
             drop_head();
         }
@@ -221,7 +221,7 @@ namespace mpp {
             peek(consumer);
         }
 
-        template <typename U = T>
+        template<typename U = T>
         U reduce(U identity, const mpp::function<U(U, T)> &f) {
             U acc = identity;
             for_each([&](T t) {

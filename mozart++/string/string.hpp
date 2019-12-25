@@ -105,7 +105,7 @@ namespace mpp {
          * @tparam T
          * @return
          */
-        template <typename T>
+        template<typename T>
         std::enable_if_t<std::is_same<T, std::string>::value, string_ref> &
         operator=(T &&) = delete;
 
@@ -119,13 +119,13 @@ namespace mpp {
         string_ref(std::nullptr_t) = delete;
 
         /*implicit*/ constexpr string_ref(const char *str)
-            : _data(str), _length(str ? string_length(str) : 0) {}
+                : _data(str), _length(str ? string_length(str) : 0) {}
 
         /*implicit*/ constexpr string_ref(const char *data, size_t length)
-            : _data(data), _length(length) {}
+                : _data(data), _length(length) {}
 
         /*implicit*/ string_ref(const std::string &str)
-            : _data(str.data()), _length(str.length()) {}
+                : _data(str.data()), _length(str.length()) {}
 
         iterator begin() const { return _data; }
 
@@ -193,7 +193,7 @@ namespace mpp {
          * @param allocator allocator
          * @return copied string_ref(with data)
          */
-        template <typename Allocator>
+        template<typename Allocator>
         string_ref copy(Allocator &allocator) const {
             if (empty()) {
                 return string_ref{};
@@ -383,8 +383,8 @@ namespace mpp {
         size_t find_ignore_case(char c, size_t start_index = 0) const {
             int lc = std::tolower(c);
             return find_if(
-                [lc](char d) { return std::tolower(d) == lc; },
-                start_index
+                    [lc](char d) { return std::tolower(d) == lc; },
+                    start_index
             );
         }
 
@@ -413,8 +413,8 @@ namespace mpp {
          */
         size_t find_if_not(const mpp::function<bool(char)> &f, size_t start_index = 0) const {
             return find_if(
-                [&f](char c) { return !f(c); },
-                start_index
+                    [&f](char c) { return !f(c); },
+                    start_index
             );
         }
 
@@ -827,7 +827,7 @@ namespace mpp {
                 return std::make_pair(*this, string_ref());
             }
             return std::make_pair(slice(0, index),
-                slice(index + separator.size(), npos));
+                                  slice(index + separator.size(), npos));
         }
 
         /**
@@ -852,7 +852,7 @@ namespace mpp {
                 return std::make_pair(*this, string_ref());
             }
             return std::make_pair(slice(0, index),
-                slice(index + separator.size(), npos));
+                                  slice(index + separator.size(), npos));
         }
 
         /**
