@@ -19,71 +19,110 @@ namespace mpp {
 class mpp::any final {
 public:
     using typeid_t = std::type_index;
-    // 缓冲池大小，过大的值可能会适而其反
+    /**
+     * Buffer pool size, too large value may be appropriate for the reverse
+     */
     static constexpr size_t default_allocate_buffer_size = 16;
-    /*
-    * 分配器提供者，默认使用 Mozart++ 分配器，可根据需要替换为内存池
-    * 提示：本框架的 Any 使用了 Small Data Optimize 技术，可大幅减少堆的负担
-    * 更换内存池可能并不会提升太多性能
-    */
+    /**
+     * Allocator provider, which uses the Mozart++ allocator by default, can be replaced by a memory pool as needed
+     * Tip: the Any of this framework USES the Small Data Optimize technique to significantly reduce the heap load
+     * Changing the memory pool may not improve performance much
+     *
+     * @tparam DataType
+     */
     template<typename T>
     using default_allocator_provider = allocator<T>;
-    // 简化定义
+    /**
+     * Unified definition
+     */
     template<typename T>
     using default_allocator = allocator_type<T, default_allocate_buffer_size, default_allocator_provider>;
 
 private:
-    /*
-        数据存储基类
-        使用多态实现类型擦除的关键，即抽象出类型无关的接口
-        此类为接口类，或称之为纯虚基类
-    */
+    /**
+     * Data storage base class
+     * The key to using polymorphism for type erasers is to abstract out type-independent interfaces
+     * This class is an interface class, or a pure virtual base class
+     */
     class stor_base {
     public:
-        // 默认构造函数，直接使用 default 版本
+        /**
+         * Default constructor, directly using the default version
+         */
         stor_base() = default;
 
-        // 复制构造函数，直接使用 default 版本
+        /**
+         * Copy the constructor, using the default version directly
+         */
         stor_base(const stor_base &) = default;
 
-        // 析构函数，声明为虚函数并使用 default 实现
+        /**
+         * Destructor, declared as a virtual function and implemented using default
+         */
         virtual ~stor_base() = default;
 
-        // RTTI类型函数，返回类型信息
+        /**
+         * RTTI type function
+         *
+         * @return std::type_index
+         */
         virtual std::type_index type() const noexcept = 0;
 
-        // 自杀函数，释放占用的资源
+        /**
+         * Suicide function, freeing up resources
+         *
+         * @param isEnabled is Small Data Optimize enabled
+         */
         virtual void suicide(bool) = 0;
 
-        // 克隆函数，在指定地址上构造一个当前对象的克隆
+        /**
+         * The clone function constructs a clone of the current object at the specified address
+         *
+         * @param TargetAddress
+         */
         virtual void clone(byte_t *) const = 0;
 
-        // 克隆函数，构造一个当前对象的克隆并返回
+        /**
+         * The clone function constructs a clone of the current object and returns it
+         *
+         * @return pointer of new object
+         */
         virtual stor_base *clone() const = 0;
-        // 扩展函数，返回存储的数据类型对应的扩展对象 (Not Implemented Yet)
-        // virtual type_support *extension() const = 0;
     };
 
-    /*
-        数据存储模版派生类
-        存储数据的具体实现
-        此类将利用模版类的特性自动生成所需要的派生类
-    */
+    /**
+     * Data store template derived classes
+     * Concrete implementation of storing data
+     * This class takes advantage of the properties of the template class to automatically generate the desired derived classes
+     *
+     * @tparam DataType
+     */
     template<typename T>
     class stor_impl : public stor_base {
     public:
-        // 实际存储的数据
+        /**
+         * The actual stored data
+         */
         T data;
-        // 分配器
+
+        /**
+         * Static Allocator
+         */
         static default_allocator<stor_impl<T>> allocator;
 
-        // 默认构造函数，使用 default 实现
+        /**
+         * Default constructor, implemented using default
+         */
         stor_impl() = default;
 
-        // 析构函数，使用 default 实现
+        /**
+         * Destructor, implemented using default
+         */
         virtual ~stor_impl() = default;
 
-        // 禁用复制构造函数
+        /**
+         * Disable the copy constructor
+         */
         stor_impl(const stor_impl &) = delete;
 
         // 自定义构造函数，构造存储的数据
