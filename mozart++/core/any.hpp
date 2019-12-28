@@ -10,6 +10,7 @@
 
 #include <mozart++/core/base.hpp>
 #include <mozart++/core/exception.hpp>
+#include <mozart++/core/memory.hpp>
 #include <typeindex>
 
 namespace mpp {
@@ -31,7 +32,7 @@ public:
      * @tparam DataType
      */
     template<typename T>
-    using default_allocator_provider = allocator<T>;
+    using default_allocator_provider = mpp::allocator<T>;
     /**
      * Unified definition
      */
