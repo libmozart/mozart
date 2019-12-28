@@ -38,6 +38,7 @@ namespace mpp {
     };
 
     namespace event {
+        constexpr const char *exception_event_name = "mpp::exception";
         extern event_emitter exception_raised;
     }
 
@@ -47,7 +48,7 @@ namespace mpp {
         std::exception &stdexcept = exception;
         MOZART_LOGCR(stdexcept.what())
         // Handle exceptions here
-        event::exception_raised.on(stdexcept);
+        event::exception_raised.emit(event::exception_event_name, stdexcept);
 #ifdef MOZART_NOEXCEPT
         std::terminate();
 #else
