@@ -21,6 +21,12 @@ namespace mpp {
         return std::bind(f, std::bind(g, std::placeholders::_1));
     }
 
+    template<typename A>
+    static mpp::function<bool(A)> boolean_compose(const mpp::function<bool(A)> &f,
+                                                  const mpp::function<bool(A)> &g) {
+        return [=](A x) { return f(x) && g(x); };
+    }
+
     /**
      * An alias for mpp::function. In case that we need to
      * use our own function implementation in the future.
@@ -55,7 +61,7 @@ namespace mpp {
      */
     template <typename Class, typename R, typename... Args>
     struct functor_parser<R(Class::*)(Args...) const> : public arg_type_info<Args...> {
-        using function_type = function_alias<R(Args...)>;
+        using function_type = mpp::function_alias<R(Args...)>;
         using return_type = R;
         using class_type = Class;
     };
@@ -119,7 +125,7 @@ namespace mpp {
      */
     template <typename R, typename... Args>
     struct function_parser<R(Args...) const> : public arg_type_info<Args...> {
-        using function_type = function_alias<R(Args...)>;
+        using function_type = mpp::function_alias<R(Args...)>;
         using return_type = R;
     };
 
