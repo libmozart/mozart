@@ -130,19 +130,19 @@ namespace mpp {
     };
 
     /**
-     * Short for {@code typename function_parser<F>::FunctionType}
+     * Short for {@code typename function_parser<F>::function_type}
      */
     template <typename F>
     using function_type = typename function_parser<F>::function_type;
 
     /**
-     * Convert callable things to function type (aka FunctionAlias).
-     * Sample usage: {@code auto f = makeFunction(sth); }
+     * Convert callable things to function type (aka function_alias).
+     * Sample usage: {@code auto f = make_function(sth); }
      *
-     * @see FunctionAlias
+     * @see function_alias
      * @tparam F Function typename
      * @param f function itself
-     * @return FunctionAlias object
+     * @return function_alias object
      */
     template <typename F>
     static function_type<F> make_function(F &f) {
