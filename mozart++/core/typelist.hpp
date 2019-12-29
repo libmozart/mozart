@@ -63,7 +63,7 @@ namespace mpp {
         template <typename ...>
         struct list {};
 
-        using Empty = list<>;
+        using nil = list<>;
 
         template <typename T, typename Seq>
         using cons = typename cons_impl<T, Seq>::type;

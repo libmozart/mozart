@@ -28,14 +28,14 @@ namespace mpp {
          */
         class handler_container {
         private:
-            size_t _argsCount = 0;
-            std::type_index _argsInfo;
+            size_t _args_count = 0;
+            std::type_index _args_info;
             std::shared_ptr<char> _handler;
 
         public:
             template <typename Handler>
             explicit handler_container(Handler &&handler)
-                :_argsInfo(typeid(void)) {
+                :_args_info(typeid(void)) {
                 // handler-dependent types
                 using wrapper_type = decltype(make_function(handler));
                 using arg_types = typename function_parser<wrapper_type>::decayed_arg_types;
@@ -52,8 +52,8 @@ namespace mpp {
                 auto fn = new(m) wrapper_type(make_function(handler));
 
                 // store argument info for call-time type check.
-                _argsCount = typelist::size<arg_types>::value;
-                _argsInfo = typeid(arg_types);
+                _args_count = typelist::size<arg_types>::value;
+                _args_info = typeid(arg_types);
 
                 // use std::shared_ptr to manage the allocated memory
                 // (char *) and (void *) are known as universal pointers.
@@ -73,8 +73,8 @@ namespace mpp {
 
             template <typename F>
             function_alias<F> *callable_ptr() {
-                using ArgTypes = typename function_parser<function_alias<F>>::decayed_arg_types;
-                if (_argsInfo == typeid(ArgTypes)) {
+                using callee_arg_types = typename function_parser<function_alias<F>>::decayed_arg_types;
+                if (_args_info == typeid(callee_arg_types)) {
                     return reinterpret_cast<function_alias<F> *>(_handler.get());
                 }
                 return nullptr;
@@ -83,8 +83,8 @@ namespace mpp {
             template <>
             function_alias<void()> *callable_ptr() {
                 // Directly check argument count
-                // because _argsInfo == typeid(TypeList::Empty) is much slower here.
-                if (_argsCount == 0) {
+                // because _args_info == typeid(typelist::nil) is much slower here.
+                if (_args_count == 0) {
                     return reinterpret_cast<function_alias<void()> *>(_handler.get());
                 }
                 return nullptr;
@@ -92,7 +92,7 @@ namespace mpp {
         };
 
     private:
-        std::unordered_map<std::string, std::list<handler_container>> _event;
+        std::unordered_map<std::string, std::list<handler_container>> _events;
 
     public:
         event_emitter() = default;
@@ -108,7 +108,7 @@ namespace mpp {
          */
         template <typename Handler>
         void on(const std::string &name, Handler handler) {
-            _event[name].push_back(handler_container(handler));
+            _events[name].push_back(handler_container(handler));
         }
 
         /**
@@ -117,9 +117,9 @@ namespace mpp {
          * @param name Event name
          */
         void unregister_event(const std::string &name) {
-            auto it = _event.find(name);
-            if (it != _event.end()) {
-                _event.erase(it);
+            auto it = _events.find(name);
+            if (it != _events.end()) {
+                _events.erase(it);
             }
         }
 
@@ -132,8 +132,8 @@ namespace mpp {
          */
         template <typename ...Args>
         void emit(const std::string &name, Args &&...args) {
-            auto it = _event.find(name);
-            if (it == _event.end()) {
+            auto it = _events.find(name);
+            if (it == _events.end()) {
                 return;
             }
 
@@ -150,8 +150,8 @@ namespace mpp {
          * @param name Event name
          */
         void emit(const std::string &name) {
-            auto it = _event.find(name);
-            if (it == _event.end()) {
+            auto it = _events.find(name);
+            if (it == _events.end()) {
                 return;
             }
 
