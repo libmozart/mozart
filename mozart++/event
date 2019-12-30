@@ -1,3 +1,4 @@
 // -*- C++ -*- forwarding header
 
 #include <mozart++/core/event.hpp>
+#include <mozart++/core/_event.hpp>
