@@ -43,7 +43,9 @@ set_target_properties(mozart++ PROPERTIES LINKER_LANGUAGE CXX)
 ## test targets here
 add_executable(test-optional tests/test-optional.cpp)
 add_executable(test-event tests/test-event.cpp)
-add_executable(test-event-emit tests/test-event-emit.cpp src/mozart.cpp)
+add_executable(test-event-emit tests/test-event-emit.cpp)
 add_executable(test-fp-curry tests/test-fp-curry.cpp)
 add_executable(test-stream tests/test-stream.cpp)
 add_executable(test-stringref tests/test-stringref.cpp)
+
+target_link_libraries(test-event-emit mozart++)

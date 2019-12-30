@@ -17,7 +17,6 @@ public:
     BaseDispatcher() {
         on("int", [](int i) {
             printf("BaseDispatcher: got an %d\n", i);
-            return false;
         });
     }
 };
@@ -26,9 +25,9 @@ class DerivedDispatcher : public BaseDispatcher {
 public:
     DerivedDispatcher() {
         // TODO: support override handlers
+        this->unregister_event("int");
         on("int", [](int i) {
             printf("DerivedDispatcher: got an %d\n", i);
-            return true;
         });
     }
 };
@@ -39,17 +38,14 @@ int main(int argc, const char **argv) {
     // register event handlers
     repl.on("SIGINT", []() {
         printf("Keyboard Interrupt (Ctrl-C pressed)\n");
-        return true;
     });
 
     repl.on("expr", [](const std::string &expr) {
         printf("evaluating: %s\n", expr.c_str());
-        return true;
     });
 
     repl.on("command", [](const std::string &opt) {
         printf("applying command: %s\n", opt.c_str());
-        return true;
     });
 
     // simulate real-world situation

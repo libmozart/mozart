@@ -143,54 +143,49 @@ namespace mpp {
          * Event Implementation
          * @param args listener argument types
          */
-        template <typename... ArgsT>
+        template <typename R, typename... ArgsT>
         class event_impl {
-            using function_type = mpp::function<bool(ArgsT...)>;
+            using function_type = mpp::function<R(ArgsT...)>;
             template <unsigned int... seq>
-            inline static bool call_impl(void *func, void **data,
+            inline static void call_impl(void *func, void **data,
                                          const sequence<seq...> &) noexcept
             {
-                return reinterpret_cast<function_type *>(func)->operator()(
-                           get_argument<seq, typename get_typename<seq, 0, ArgsT...>::result>(
-                               data)...);
+                reinterpret_cast<function_type *>(func)->operator()(get_argument<seq, typename get_typename<seq, 0, ArgsT...>::result>(data)...);
             }
 
         public:
             /**
              * using static function to replace virtual function to avoid unnecessary vtable overhead
              */
-            template <typename T>
-            static void *create_event(T &&func)
+            static void *create_event(const function_type &func)
             {
-                function_type *data = new function_type(std::forward<T>(func));
+                function_type *data = new function_type(func);
                 return reinterpret_cast<void *>(data);
             }
             static void destroy_event(void *data) noexcept
             {
                 delete reinterpret_cast<function_type *>(data);
             }
-            static bool call_on(void *func, void **data) noexcept
+            static void call_on(void *func, void **data) noexcept
             {
                 static typename make_sequence<sizeof...(ArgsT)>::result seq;
-                return call_impl(func, data, seq);
+                call_impl(func, data, seq);
             }
         };
         /**
          * Main Class
          */
         class event_emit {
-            template <typename...>
-            struct argument_carrier {};
             struct event {
                 void *data;
                 std::vector<std::type_index> types;
                 void (*destroy_event)(void *) noexcept;
-                bool (*call_on)(void *, void **) noexcept;
-                template <typename T, typename... ArgsT>
-                event(T &&func, argument_carrier<ArgsT...>)
+                void (*call_on)(void *, void **) noexcept;
+                template <typename R, typename... ArgsT>
+                event(const mpp::function<R(ArgsT...)> &func)
                 {
-                    using impl = event_impl<ArgsT...>;
-                    data = impl::create_event(std::forward<T>(func));
+                    using impl = event_impl<R, ArgsT...>;
+                    data = impl::create_event(func);
                     convert_typeinfo<ArgsT...>::convert(types);
                     destroy_event = &impl::destroy_event;
                     call_on = &impl::call_on;
@@ -203,12 +198,13 @@ namespace mpp {
             std::unordered_map<std::string, std::forward_list<event>> m_events;
             template <typename R, typename... ArgsT>
             void on_impl(const std::string &name,
-                         const std::function<R(ArgsT...)> &func)
+                         const mpp::function<R(ArgsT...)> &func)
             {
-                m_events[name].emplace_front(func, argument_carrier<ArgsT...>());
+                m_events[name].emplace_front(func);
             }
 
         public:
+            virtual ~event_emit() = default;
             /**
              * Register an event with handler.
              * @tparam handler type of the handler
@@ -220,12 +216,9 @@ namespace mpp {
             {
                 /**
                  * Check through type traits
-                 * 1. Listener must be a function
-                 * 2. Listener must returns bool, true represents process finish
+                 * Listener must be a function
                  */
                 static_assert(!std::is_function<T>::value, "Event must be function");
-                static_assert(std::is_same<bool, parse_function_return_t<T>>::value,
-                              "Function must returns bool");
                 on_impl(name, parse_function<T>(std::forward<T>(listener)));
             }
             /**
@@ -238,16 +231,24 @@ namespace mpp {
             void emit(const std::string &name, ArgsT &&... args)
             {
                 static void *arguments[sizeof...(ArgsT)];
-                if (m_events.count(name) == 0)
-                    throw_ex<mpp::runtime_error>("Event not exist.");
-                auto &event = m_events.at(name);
-                expand_argument(arguments, std::forward<ArgsT>(args)...);
-                for (auto &it : event) {
-                    if (sizeof...(ArgsT) != it.types.size())
-                        throw_ex<mpp::runtime_error>("Wrong size of arguments.");
-                    check_typeinfo<0, ArgsT...>::check(it.types);
-                    if (it.call_on(it.data, arguments)) break;
+                if (m_events.count(name) > 0) {
+                    auto &event = m_events.at(name);
+                    expand_argument(arguments, std::forward<ArgsT>(args)...);
+                    for (auto &it : event) {
+                        if (sizeof...(ArgsT) != it.types.size())
+                            throw_ex<mpp::runtime_error>("Wrong size of arguments.");
+                        check_typeinfo<0, ArgsT...>::check(it.types);
+                        it.call_on(it.data, arguments);
+                    }
                 }
+            }
+            /**
+             * Clear all handlers registered to event.
+             * @param name event name
+             */
+            void unregister_event(const std::string &name)
+            {
+                m_events.erase(name);
             }
         };
     }  // namespace event_emit_impl
