@@ -37,8 +37,6 @@ namespace mpp {
         }
     };
 
-    class event_emitter;
-
     namespace event {
         constexpr const char *exception_event_name = "mpp::exception";
         extern event_emitter exception_raised;
