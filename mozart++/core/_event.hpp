@@ -73,16 +73,6 @@ namespace mpp {
             }
         };
         /**
-         * Unpack the template type packages
-         * i.e. using type = get_typename<index, 0, ArgsT...>::result;
-         */
-        template <unsigned int N, unsigned int idx, typename T, typename... ArgsT>
-        struct get_typename : public get_typename<N, idx + 1, ArgsT...> {};
-        template <unsigned int N, typename T, typename... ArgsT>
-        struct get_typename<N, N, T, ArgsT...> {
-            using result = T;
-        };
-        /**
          * Instancing argument from raw data
          * @param data pointed to raw data
          * @return reference of instanced data
@@ -102,7 +92,7 @@ namespace mpp {
         void expand_argument(void **data, T &&val, ArgsT &&... args)
         {
             *data = reinterpret_cast<void *>(&val);
-            expand_argument(data, std::forward<ArgsT>(args)...);
+            expand_argument(data + 1, std::forward<ArgsT>(args)...);
         }
         /**
          * Function Parser
@@ -117,7 +107,7 @@ namespace mpp {
             using type = std::function<R(ArgsT...)>;
         };
         template <typename T>
-        struct function_parser : public functor_parser<T> {};
+        struct function_parser;
         template <typename R, typename... ArgsT>
         struct function_parser<R(ArgsT...)> {
             using return_type = R;
@@ -134,11 +124,43 @@ namespace mpp {
             using type = std::function<R(const Class &, ArgsT...)>;
         };
         template <typename T>
-        using parse_function =
-            typename function_parser<typename std::remove_cv<T>::type>::type;
+        class is_functor {
+            template <typename X, typename = decltype(&X::operator())>
+            static constexpr bool test(int)
+            {
+                return true;
+            }
+            template <typename>
+            static constexpr bool test(...)
+            {
+                return false;
+            }
+
+        public:
+            static constexpr bool value = test<T>(0);
+        };
+        template <bool condition, typename R, template <typename> class T,
+                  template <typename> class X>
+        struct conditional_dispatcher;
+        template <typename R, template <typename> class T, template <typename> class X>
+        struct conditional_dispatcher<true, R, T, X> {
+            using result = T<R>;
+        };
+        template <typename R, template <typename> class T, template <typename> class X>
+        struct conditional_dispatcher<false, R, T, X> {
+            using result = X<R>;
+        };
+        template <typename T>
+        using callable_parser =
+            typename conditional_dispatcher<is_functor<T>::value, T, functor_parser,
+            function_parser>::result;
+        template <typename T>
+        using parse_function = typename callable_parser<typename std::remove_reference<
+                               typename std::remove_const<T>::type>::type>::type;
         template <typename T>
         using parse_function_return_t =
-            typename function_parser<typename std::remove_cv<T>::type>::return_type;
+            typename callable_parser<typename std::remove_reference<
+            typename std::remove_const<T>::type>::type>::return_type;
         /**
          * Event Implementation
          * @param args listener argument types
@@ -146,16 +168,18 @@ namespace mpp {
         template <typename R, typename... ArgsT>
         class event_impl {
             using function_type = mpp::function<R(ArgsT...)>;
-            template <unsigned int... seq>
+            template <unsigned int... Seq>
             inline static void call_impl(void *func, void **data,
-                                         const sequence<seq...> &) noexcept
+                                         const sequence<Seq...> &) noexcept
             {
-                reinterpret_cast<function_type *>(func)->operator()(get_argument<seq, typename get_typename<seq, 0, ArgsT...>::result>(data)...);
+                reinterpret_cast<function_type *>(func)->operator()(
+                    get_argument<Seq, ArgsT>(data)...);
             }
 
         public:
             /**
-             * using static function to replace virtual function to avoid unnecessary vtable overhead
+             * using static function to replace virtual function to avoid unnecessary
+             * vtable overhead
              */
             static void *create_event(const function_type &func)
             {
@@ -204,7 +228,9 @@ namespace mpp {
             }
 
         public:
+            event_emit() = default;
             virtual ~event_emit() = default;
+            event_emit(const event_emit &) = delete;
             /**
              * Register an event with handler.
              * @tparam handler type of the handler

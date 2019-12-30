@@ -32,6 +32,12 @@ public:
     }
 };
 
+void test_func(char a, int b, double c, std::string &d)
+{
+    printf("%c, %d, %lf, %s\n", a, b, c, d.c_str());
+    d = "World";
+}
+
 int main(int argc, const char **argv) {
     REPL repl;
 
@@ -48,10 +54,15 @@ int main(int argc, const char **argv) {
         printf("applying command: %s\n", opt.c_str());
     });
 
+    repl.on("test", test_func);
+
     // simulate real-world situation
     repl.emit("command", std::string("b main"));
     repl.emit("expr", std::string("system.run(\"rm -rf --no-preserve-root /\")"));
     repl.emit("SIGINT");
+    std::string str("Hello");
+    repl.emit("test", '@', 12, 3.14, str);
+    printf("%s\n", str.c_str());
 
     DerivedDispatcher dispatcher;
     dispatcher.emit("int", 100);
