@@ -15,6 +15,7 @@
 #include <vector>
 
 namespace mpp {
+    std::string cxx_demangle(const char *);
     namespace event_emit_impl {
         template <unsigned int... seq>
         struct sequence final {};
@@ -49,7 +50,7 @@ namespace mpp {
             static void check(const std::vector<std::type_index> &arr)
             {
                 if (arr[idx] != typeid(T))
-                    throw_ex<mpp::runtime_error>("Wrong argument.");
+                    throw_ex<mpp::runtime_error>(std::string("Wrong argument. Expect \"") + cxx_demangle(arr[idx].name()) + "\", provided \"" + cxx_demangle(typeid(T).name()));
                 else
                     check_typeinfo<idx + 1, ArgsT...>::check(arr);
             }
@@ -76,25 +77,32 @@ namespace mpp {
         struct functor_parser : public functor_parser<decltype(&T::operator())> {};
         template <typename R, typename Class, typename... ArgsT>
         struct functor_parser<R (Class::*)(ArgsT...) const> {
+            using return_type = R;
             using type = std::function<R(ArgsT...)>;
         };
         template <typename T>
         struct function_parser : public functor_parser<T> {};
         template <typename R, typename... ArgsT>
         struct function_parser<R(ArgsT...)> {
+            using return_type = R;
             using type = std::function<R(ArgsT...)>;
         };
         template <typename R, typename Class, typename... ArgsT>
         struct function_parser<R (Class::*)(ArgsT...)> {
+            using return_type = R;
             using type = std::function<R(Class &, ArgsT...)>;
         };
         template <typename R, typename Class, typename... ArgsT>
         struct function_parser<R (Class::*)(ArgsT...) const> {
+            using return_type = R;
             using type = std::function<R(const Class &, ArgsT...)>;
         };
         template <typename T>
         using parse_function =
             typename function_parser<typename std::remove_cv<T>::type>::type;
+        template <typename T>
+        using parse_function_return_t =
+            typename function_parser<typename std::remove_cv<T>::type>::return_type;
         class event_emit {
             class event_base {
             public:
@@ -148,6 +156,8 @@ namespace mpp {
             template <typename T>
             void on(const std::string &name, T &&listener)
             {
+                static_assert(!std::is_function<T>::value, "Event must be function");
+                static_assert(std::is_same<bool, parse_function_return_t<T>>::value, "Function must returns bool");
                 on_impl(name, parse_function<T>(std::forward<T>(listener)));
             }
             template <typename... ArgsT>
@@ -159,6 +169,8 @@ namespace mpp {
                 auto &event = m_events.at(name);
                 expand_argument(arguments, std::forward<ArgsT>(args)...);
                 for (auto &it : event) {
+                    if (sizeof...(ArgsT) != it->get_argument_types().size())
+                        throw_ex<mpp::runtime_error>("Wrong size of arguments.");
                     check_typeinfo<0, ArgsT...>::check(it->get_argument_types());
                     if (it->call_on(arguments)) break;
                 }
