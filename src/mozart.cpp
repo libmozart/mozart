@@ -21,8 +21,6 @@ mpp::any::default_allocator<mpp::any::stor_impl<T>> mpp::any::stor_impl<T>::allo
 
 std::wstring_convert<std::codecvt_utf8<wchar_t>> mpp::codecvt::conv;
 
-mpp::event_emitter mpp::event::exception_raised;
-
 #ifdef MOZART_PLATFORM_WIN32
 
 #include <shlobj.h>

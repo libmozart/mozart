@@ -9,7 +9,6 @@
 #pragma once
 
 #include <mozart++/core/base.hpp>
-#include <mozart++/core/event.hpp>
 #include <exception>
 #include <string>
 
@@ -38,19 +37,11 @@ namespace mpp {
         }
     };
 
-    namespace event {
-        constexpr const char *exception_event_name = "mpp::exception";
-        extern event_emitter exception_raised;
-    }
-
     template<typename T, typename... ArgsT>
     void throw_ex(ArgsT &&... args)
     {
         T exception(std::forward<ArgsT>(args)...);
-        std::exception &stdexcept = exception;
-        MOZART_LOGCR(stdexcept.what())
-        // Handle exceptions here
-        event::exception_raised.emit(event::exception_event_name, stdexcept);
+        MOZART_LOGCR(exception.what())
 #ifdef MOZART_NOEXCEPT
         std::terminate();
 #else
