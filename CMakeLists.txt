@@ -47,5 +47,6 @@ add_executable(test-event-emit tests/test-event-emit.cpp)
 add_executable(test-fp-curry tests/test-fp-curry.cpp)
 add_executable(test-stream tests/test-stream.cpp)
 add_executable(test-stringref tests/test-stringref.cpp)
+add_executable(test-typelist tests/test-typelist.cpp)
 
 target_link_libraries(test-event-emit mozart++)
