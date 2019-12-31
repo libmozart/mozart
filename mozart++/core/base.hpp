@@ -71,6 +71,7 @@
 #include <cstdint>
 #include <cstddef>
 #include <utility>
+#include <string>
 
 /**
  * Mozart++ Log System
@@ -193,6 +194,9 @@ namespace mpp {
     protected:
         singleton() = default;
     };
+
+    // Name demangle
+    std::string cxx_demangle(const char *);
 }
 
 namespace mpp_impl {

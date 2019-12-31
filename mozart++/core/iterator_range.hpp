@@ -34,11 +34,17 @@ namespace mpp {
                 : begin_iterator(std::move(begin_iterator)),
                   end_iterator(std::move(end_iterator)) {}
 
-        IteratorT begin() const { return begin_iterator; }
+        IteratorT begin() const {
+            return begin_iterator;
+        }
 
-        IteratorT end() const { return end_iterator; }
+        IteratorT end() const {
+            return end_iterator;
+        }
 
-        bool empty() const { return begin_iterator == end_iterator; }
+        bool empty() const {
+            return begin_iterator == end_iterator;
+        }
     };
 
     /*

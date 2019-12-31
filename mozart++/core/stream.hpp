@@ -84,9 +84,15 @@ namespace mpp {
                 : _head(head),
                   _remaining(true),
                   _finite_stream(false),
-                  _producer([](T x) { return x; }),
-                  _predicate([](T x) { return true; }),
-                  _mapper([](T x) { return x; }) {
+                  _producer([](T x) {
+                      return x;
+                  }),
+                  _predicate([](T x) {
+                      return true;
+                  }),
+                  _mapper([](T x) {
+                      return x;
+                  }) {
         }
 
         explicit stream(std::deque<T> list)
@@ -94,9 +100,15 @@ namespace mpp {
                   _finite_data(std::move(list)),
                   _finite_stream(true),
                   _remaining(!_finite_data.empty()),
-                  _producer([](T x) { return x; }),
-                  _predicate([](T x) { return true; }),
-                  _mapper([](T x) { return x; }) {
+                  _producer([](T x) {
+                      return x;
+                  }),
+                  _predicate([](T x) {
+                      return true;
+                  }),
+                  _mapper([](T x) {
+                      return x;
+                  }) {
             // Bind the head to the first element of list
             drop_head();
         }
@@ -133,7 +145,9 @@ namespace mpp {
         }
 
         stream<T> &drop_while(const predicate_type &predicate) {
-            return filter([=](T x) { return !predicate(x); });
+            return filter([=](T x) {
+                return !predicate(x);
+            });
         }
 
         stream<T> &travel(const predicate_type &predicate) {
@@ -165,7 +179,9 @@ namespace mpp {
         }
 
         std::vector<T> collect() {
-            return collect([](T) { return true; });
+            return collect([](T) {
+                return true;
+            });
         }
 
         std::vector<T> collect(int n) {
@@ -242,7 +258,9 @@ namespace mpp {
         }
 
         bool none(const predicate_type &predicate) {
-            return any([&](T x) { return !predicate(x); });
+            return any([&](T x) {
+                return !predicate(x);
+            });
         }
 
         bool all(const predicate_type &predicate) {

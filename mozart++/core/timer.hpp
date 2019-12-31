@@ -1,5 +1,5 @@
 /**
- * Mozart++ Template Library: Utility
+ * Mozart++ Template Library: Timer
  * Licensed under MIT License
  * Copyright (c) 2019 Covariant Institute
  * Website: https://covariant.cn/
