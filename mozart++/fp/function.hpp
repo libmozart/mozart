@@ -123,13 +123,13 @@ namespace mpp {
      * Encapsulation for function parser
      * Removing constants and reference from original type
      */
-    template<typename _fT> using function_parser = mpp_impl::function_parser<typename std::remove_reference<typename std::remove_const<_fT>::type>::type>;
+    template<typename F> using function_parser = mpp_impl::function_parser<std::remove_reference_t<std::remove_const_t<F>>>;
 
     /**
      * Short for {@code typename function_parser<F>::function_type}
      */
-    template<typename _fT>
-    using function_type = typename function_parser<_fT>::function_type;
+    template<typename F>
+    using function_type = typename function_parser<F>::function_type;
 
     /**
      * Convert callable things to function type (aka function_alias).
@@ -140,8 +140,8 @@ namespace mpp {
      * @param f function itself
      * @return function_alias object
      */
-    template<typename _fT>
-    static function_type<_fT> make_function(_fT &&func) {
-        return function_type<_fT>(mpp::forward<_fT>(func));
+    template<typename F>
+    static function_type<F> make_function(F &&func) {
+        return function_type<F>(mpp::forward<F>(func));
     }
 }
