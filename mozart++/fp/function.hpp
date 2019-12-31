@@ -123,7 +123,8 @@ namespace mpp {
      * Encapsulation for function parser
      * Removing constants and reference from original type
      */
-    template<typename F> using function_parser = mpp_impl::function_parser<std::remove_reference_t<std::remove_const_t<F>>>;
+    template<typename F>
+    using function_parser = mpp_impl::function_parser<std::remove_reference_t<std::remove_const_t<F>>>;
 
     /**
      * Short for {@code typename function_parser<F>::function_type}

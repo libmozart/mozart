@@ -1,5 +1,5 @@
 /**
- * Mozart++ Template Library: Utility
+ * Mozart++ Template Library: Timer
  * Licensed under MIT License
  * Copyright (c) 2019 Covariant Institute
  * Website: https://covariant.cn/
@@ -84,7 +84,4 @@ namespace mpp {
             return end - begin;
         }
     };
-
-    // Name demangle
-    std::string cxx_demangle(const char *);
 }

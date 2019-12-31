@@ -9,9 +9,8 @@
 #pragma once
 
 #include <forward_list>
-#include <mozart++/utility>
-#include <mozart++/exception>
 #include <mozart++/function>
+#include <mozart++/exception>
 #include <mozart++/type_traits>
 #include <typeindex>
 #include <unordered_map>
@@ -302,10 +301,8 @@ namespace mpp {
              */
             template<typename T>
             void on(const std::string &name, T &&listener) {
-                /**
-                 * Check through type traits
-                 * Listener must be a function
-                 */
+                // Check through type traits
+                // Listener must be a function
                 static_assert(!std::is_function<T>::value, "Event must be function");
                 on_impl(name, mpp::make_function(mpp::forward<T>(listener)));
             }
@@ -318,13 +315,13 @@ namespace mpp {
              */
             template<typename... ArgsT>
             void emit(const std::string &name, ArgsT &&... args) {
-                static void *arguments[sizeof...(ArgsT)];
                 if (m_events.count(name) > 0) {
                     auto &event = m_events.at(name);
+                    void *arguments[sizeof...(ArgsT)];
                     expand_argument(arguments, mpp::forward<ArgsT>(args)...);
                     for (auto &it : event) {
                         if (sizeof...(ArgsT) != it.types.size())
-                            throw_ex<mpp::runtime_error>("Wrong size of arguments.");
+                            throw_ex<mpp::runtime_error>("Invalid call to event handler: Wrong size of arguments.");
                         check_typeinfo<0, ArgsT...>::check(it.types);
                         it.call_on(it.data, arguments);
                     }
