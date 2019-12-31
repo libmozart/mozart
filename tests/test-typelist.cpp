@@ -38,9 +38,9 @@ int main() {
     using c3 = typelist::list<int, char, double, float>;
 
     static_assert(typelist::equals<c3, typelist::concat<c1, c2>>::value,
-        "You wrote a bug");
+                  "You wrote a bug");
     static_assert(typelist::equals<c1, typelist::concat<c1, typelist::nil>>::value,
-        "You wrote a bug");
+                  "You wrote a bug");
     static_assert(typelist::equals<c2, typelist::concat<typelist::nil, c2>>::value,
-        "You wrote a bug");
+                  "You wrote a bug");
 }

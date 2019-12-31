@@ -31,15 +31,13 @@ namespace mpp {
 
         runtime_error &operator=(runtime_error &&) = default;
 
-        const char *what() const noexcept override
-        {
+        const char *what() const noexcept override {
             return this->mWhat.c_str();
         }
     };
 
     template<typename T, typename... ArgsT>
-    void throw_ex(ArgsT &&... args)
-    {
+    void throw_ex(ArgsT &&... args) {
         T exception(std::forward<ArgsT>(args)...);
         MOZART_LOGCR(exception.what())
 #ifdef MOZART_NOEXCEPT

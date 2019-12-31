@@ -32,8 +32,7 @@ public:
     }
 };
 
-void test_func(char a, int b, double c, std::string &d)
-{
+void test_func(char a, int b, double c, std::string &d) {
     printf("%c, %d, %lf, %s\n", a, b, c, d.c_str());
     d = "World";
 }
