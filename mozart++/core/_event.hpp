@@ -10,26 +10,14 @@
 
 #include <forward_list>
 #include <mozart++/core/exception.hpp>
+#include <mozart++/core/utility.hpp>
+#include <mozart++/function>
 #include <typeindex>
 #include <unordered_map>
 #include <vector>
 
 namespace mpp {
-// Name Demangling
-    std::string cxx_demangle(const char *);
     namespace event_emit_impl {
-        /**
-         * Integer Sequence
-         * i.e. using sequence_type = typename make_sequence<Maximum>::result;
-         */
-        template <unsigned int... seq>
-        struct sequence final {};
-        template <unsigned int N, unsigned int... seq>
-        struct make_sequence : public make_sequence<N - 1, N - 1, seq...> {};
-        template <unsigned int... seq>
-        struct make_sequence<0, seq...> {
-            using result = sequence<seq...>;
-        };
         /**
          * Convert template type packages into std::vector<std::type_index>
          * i.e. convert_typeinfo<ArgsT...>::convert(info_arr);
@@ -92,75 +80,8 @@ namespace mpp {
         void expand_argument(void **data, T &&val, ArgsT &&... args)
         {
             *data = reinterpret_cast<void *>(&val);
-            expand_argument(data + 1, std::forward<ArgsT>(args)...);
+            expand_argument(data + 1, mpp::forward<ArgsT>(args)...);
         }
-        /**
-         * Function Parser
-         * parse_function: target function type
-         * parse_function_return_t: target function return type
-         */
-        template <typename T>
-        struct functor_parser : public functor_parser<decltype(&T::operator())> {};
-        template <typename R, typename Class, typename... ArgsT>
-        struct functor_parser<R (Class::*)(ArgsT...) const> {
-            using return_type = R;
-            using type = std::function<R(ArgsT...)>;
-        };
-        template <typename T>
-        struct function_parser;
-        template <typename R, typename... ArgsT>
-        struct function_parser<R(ArgsT...)> {
-            using return_type = R;
-            using type = std::function<R(ArgsT...)>;
-        };
-        template <typename R, typename Class, typename... ArgsT>
-        struct function_parser<R (Class::*)(ArgsT...)> {
-            using return_type = R;
-            using type = std::function<R(Class &, ArgsT...)>;
-        };
-        template <typename R, typename Class, typename... ArgsT>
-        struct function_parser<R (Class::*)(ArgsT...) const> {
-            using return_type = R;
-            using type = std::function<R(const Class &, ArgsT...)>;
-        };
-        template <typename T>
-        class is_functor {
-            template <typename X, typename = decltype(&X::operator())>
-            static constexpr bool test(int)
-            {
-                return true;
-            }
-            template <typename>
-            static constexpr bool test(...)
-            {
-                return false;
-            }
-
-        public:
-            static constexpr bool value = test<T>(0);
-        };
-        template <bool condition, typename R, template <typename> class T,
-                  template <typename> class X>
-        struct conditional_dispatcher;
-        template <typename R, template <typename> class T, template <typename> class X>
-        struct conditional_dispatcher<true, R, T, X> {
-            using result = T<R>;
-        };
-        template <typename R, template <typename> class T, template <typename> class X>
-        struct conditional_dispatcher<false, R, T, X> {
-            using result = X<R>;
-        };
-        template <typename T>
-        using callable_parser =
-            typename conditional_dispatcher<is_functor<T>::value, T, functor_parser,
-            function_parser>::result;
-        template <typename T>
-        using parse_function = typename callable_parser<typename std::remove_reference<
-                               typename std::remove_const<T>::type>::type>::type;
-        template <typename T>
-        using parse_function_return_t =
-            typename callable_parser<typename std::remove_reference<
-            typename std::remove_const<T>::type>::type>::return_type;
         /**
          * Event Implementation
          * @param args listener argument types
@@ -183,7 +104,7 @@ namespace mpp {
              */
             static void *create_event(const function_type &func)
             {
-                function_type *data = new function_type(func);
+                auto data = new function_type(func);
                 return reinterpret_cast<void *>(data);
             }
             static void destroy_event(void *data) noexcept
@@ -206,7 +127,7 @@ namespace mpp {
                 void (*destroy_event)(void *) noexcept;
                 void (*call_on)(void *, void **) noexcept;
                 template <typename R, typename... ArgsT>
-                event(const mpp::function<R(ArgsT...)> &func)
+                explicit event(const mpp::function<R(ArgsT...)> &func)
                 {
                     using impl = event_impl<R, ArgsT...>;
                     data = impl::create_event(func);
@@ -245,7 +166,7 @@ namespace mpp {
                  * Listener must be a function
                  */
                 static_assert(!std::is_function<T>::value, "Event must be function");
-                on_impl(name, parse_function<T>(std::forward<T>(listener)));
+                on_impl(name, mpp::make_function(mpp::forward<T>(listener)));
             }
             /**
              * Call all event handlers associated with event name.
@@ -259,7 +180,7 @@ namespace mpp {
                 static void *arguments[sizeof...(ArgsT)];
                 if (m_events.count(name) > 0) {
                     auto &event = m_events.at(name);
-                    expand_argument(arguments, std::forward<ArgsT>(args)...);
+                    expand_argument(arguments, mpp::forward<ArgsT>(args)...);
                     for (auto &it : event) {
                         if (sizeof...(ArgsT) != it.types.size())
                             throw_ex<mpp::runtime_error>("Wrong size of arguments.");

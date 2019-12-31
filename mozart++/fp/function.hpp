@@ -33,7 +33,10 @@ namespace mpp {
      */
     template <typename T>
     using function_alias = mpp::function<T>;
+}
 
+namespace mpp_impl
+{
     template <typename ... Args>
     struct arg_type_info {
         /**
@@ -83,20 +86,6 @@ namespace mpp {
     };
 
     /**
-     * Parse function (pointer) lvalue references.
-     */
-    template <typename F>
-    struct function_parser<F &> : public function_parser<F> {
-    };
-
-    /**
-     * Parse function (pointer) rvalue references.
-     */
-    template <typename F>
-    struct function_parser<F &&> : public function_parser<F> {
-    };
-
-    /**
      * Parse instance methods by converting signature to normal form.
      */
     template <typename Class, typename R, typename... Args>
@@ -128,12 +117,21 @@ namespace mpp {
         using function_type = mpp::function_alias<R(Args...)>;
         using return_type = R;
     };
+}
+
+namespace mpp
+{
+    /**
+     * Encapsulation for function parser
+     * Removing constants and reference from original type
+     */
+    template<typename _fT> using function_parser = mpp_impl::function_parser<typename std::remove_reference<typename std::remove_const<_fT>::type>::type>;
 
     /**
      * Short for {@code typename function_parser<F>::function_type}
      */
-    template <typename F>
-    using function_type = typename function_parser<F>::function_type;
+    template <typename _fT>
+    using function_type = typename function_parser<_fT>::function_type;
 
     /**
      * Convert callable things to function type (aka function_alias).
@@ -144,8 +142,8 @@ namespace mpp {
      * @param f function itself
      * @return function_alias object
      */
-    template <typename F>
-    static function_type<F> make_function(F &f) {
-        return static_cast<function_type<F>>(f);
+    template <typename _fT>
+    static function_type<_fT> make_function(_fT &&func) {
+        return function_type<_fT>(mpp::forward<_fT>(func));
     }
 }

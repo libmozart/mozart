@@ -127,20 +127,22 @@ namespace mpp {
     using std::swap;
 // Alignment
     template<typename type> using aligned_type =
-    typename std::aligned_storage<sizeof(type), std::alignment_of<type>::value>::type;
+        typename std::aligned_storage<sizeof(type), std::alignment_of<type>::value>::type;
 
     template<size_t len, typename ...types> using aligned_union =
-    typename std::aligned_union<len, types...>::type;
+        typename std::aligned_union<len, types...>::type;
 
     inline byte_t *uninitialized_copy(byte_t *, byte_t *, size_t) noexcept;
 
     template<typename T, typename ...Args>
-    inline static void construct_at(byte_t *ptr, Args &&...args) {
+    inline static void construct_at(byte_t *ptr, Args &&...args)
+    {
         ::new(ptr) T(forward<Args>(args)...);
     }
 
     template<typename T>
-    inline static void destroy_at(byte_t *ptr) {
+    inline static void destroy_at(byte_t *ptr)
+    {
         reinterpret_cast<T *>(ptr)->~T();
     }
 
