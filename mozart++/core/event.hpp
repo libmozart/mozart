@@ -43,16 +43,10 @@ namespace mpp {
                 using wrapper_type = decltype(make_function(handler));
                 using arg_types = typename function_parser<wrapper_type>::decayed_arg_types;
 
-                auto *m = std::malloc(sizeof(wrapper_type));
-                if (m == nullptr) {
-                    // should panic oom
-                    return;
-                }
-
                 // generate the handler wrapper dynamically according to
                 // the callback type, so we can pass varied and arbitrary
                 // count of arguments to trigger the event handler.
-                auto fn = new(m) wrapper_type(make_function(handler));
+                auto *fn = new wrapper_type(make_function(handler));
 
                 // store argument info for call-time type check.
                 _args_count = typelist::size<arg_types>::value;
@@ -64,12 +58,9 @@ namespace mpp {
                         // wrapper function itself
                         reinterpret_cast<char *>(fn),
 
-                        // wrapper function deleter, responsible to call destructor
+                        // wrapper function deleter
                         [](char *ptr) {
-                            if (ptr != nullptr) {
-                                reinterpret_cast<wrapper_type *>(ptr)->~wrapper_type();
-                                std::free(ptr);
-                            }
+                            delete reinterpret_cast<wrapper_type *>(ptr);
                         }
                 );
             }
