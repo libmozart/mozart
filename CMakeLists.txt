@@ -40,12 +40,14 @@ add_library(mozart++ STATIC
         )
 set_target_properties(mozart++ PROPERTIES LINKER_LANGUAGE CXX)
 
-## test targets here
+## test and benchmark targets here
 add_executable(test-optional tests/test-optional.cpp)
 add_executable(test-event tests/test-event.cpp)
 add_executable(test-fp-curry tests/test-fp-curry.cpp)
 add_executable(test-stream tests/test-stream.cpp)
 add_executable(test-stringref tests/test-stringref.cpp)
 add_executable(test-typelist tests/test-typelist.cpp)
+add_executable(benchmark-event-emitter tests/benchmark-event-emitter.cpp)
 
 target_link_libraries(test-event mozart++)
+target_link_libraries(benchmark-event-emitter mozart++)
