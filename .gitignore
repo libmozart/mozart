@@ -44,7 +44,7 @@ imgui.ini
 
 # Build Caches
 cmake-build-debug/
-cmake-build/
+cmake-build-*/
 build/
 
 # macOS Files

@@ -12,6 +12,7 @@
 #include <mozart++/function>
 #include <mozart++/exception>
 #include <mozart++/type_traits>
+#include <memory>
 #include <typeindex>
 #include <unordered_map>
 #include <vector>
@@ -82,7 +83,6 @@ namespace mpp {
                 return nullptr;
             }
 
-            template<>
             function_alias<void()> *callable_ptr() {
                 // Directly check argument count
                 // because _args_info == typeid(typelist::nil) is much slower here.
@@ -144,6 +144,7 @@ namespace mpp {
             }
         }
     };
+
     /**
      * Attentive Implementation(for debug)
      */

@@ -14,8 +14,10 @@
 #include <vector>
 #include <bitset>
 #include <mozart++/core/iterator_range.hpp>
+#include <mozart++/exception>
 #include <mozart++/stream>
 #include <mozart++/function>
+#include <climits>
 
 namespace mpp {
     /**
@@ -93,7 +95,9 @@ namespace mpp {
     public:
         char operator[](size_t index) const {
             // TODO: replace with exception handling system.
-            assert(index < _length && "Invalid index!");
+            if (index >= _length) {
+                mpp::throw_ex<mpp::runtime_error>("stringref: invalid index");
+            }
             return _data[index];
         }
 
@@ -171,8 +175,9 @@ namespace mpp {
          * @return the first char
          */
         char front() const {
-            // TODO: replace with exception handling system.
-            assert(!empty());
+            if (empty()) {
+                mpp::throw_ex<mpp::runtime_error>("string_ref: front() on empty string");
+            }
             return _data[0];
         }
 
@@ -182,8 +187,9 @@ namespace mpp {
          * @return the last char
          */
         char back() const {
-            // TODO: replace with exception handling system.
-            assert(!empty());
+            if (empty()) {
+                mpp::throw_ex<mpp::runtime_error>("string_ref: back() on empty string");
+            }
             return _data[_length - 1];
         }
 
@@ -745,8 +751,10 @@ namespace mpp {
          * @return
          */
         string_ref drop_front(size_t N = 1) const {
-            // TODO: replace with exception handling system.
-            assert(size() >= N && "Dropping more elements than exist");
+            if (size() < N) {
+                mpp::throw_ex<mpp::runtime_error>(
+                    "string_ref: Dropping more elements than exist");
+            }
             return substr(N);
         }
 
@@ -758,8 +766,10 @@ namespace mpp {
          * @return
          */
         string_ref drop_back(size_t N = 1) const {
-            // TODO: replace with exception handling system.
-            assert(size() >= N && "Dropping more elements than exist");
+            if (size() < N) {
+                mpp::throw_ex<mpp::runtime_error>(
+                    "string_ref: Dropping more elements than exist");
+            }
             return substr(0, size() - N);
         }
 
