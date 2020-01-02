@@ -98,7 +98,7 @@ namespace mpp_impl {
         public:
             event_emitter() = default;
 
-            ~event_emitter() = default;
+            virtual ~event_emitter() = default;
 
             /**
              * Register an event with handler.
