@@ -753,7 +753,7 @@ namespace mpp {
         string_ref drop_front(size_t N = 1) const {
             if (size() < N) {
                 mpp::throw_ex<mpp::runtime_error>(
-                    "string_ref: Dropping more elements than exist");
+                        "string_ref: Dropping more elements than exist");
             }
             return substr(N);
         }
@@ -768,7 +768,7 @@ namespace mpp {
         string_ref drop_back(size_t N = 1) const {
             if (size() < N) {
                 mpp::throw_ex<mpp::runtime_error>(
-                    "string_ref: Dropping more elements than exist");
+                        "string_ref: Dropping more elements than exist");
             }
             return substr(0, size() - N);
         }
