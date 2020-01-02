@@ -215,72 +215,39 @@ namespace mpp {
         }
 
         /**
-         * Event Implementation
-         * @param args listener argument types
-         */
-        template<typename R, typename... ArgsT>
-        class event_impl {
-            using function_type = mpp::function<R(ArgsT...)>;
-
-            template<unsigned int... Seq>
-            inline static void call_impl(void *func, void **data,
-                                         const sequence<Seq...> &) noexcept {
-                reinterpret_cast<function_type *>(func)->operator()(
-                        get_argument<Seq, ArgsT>(data)...);
-            }
-
-        public:
-            /**
-             * using static function to replace virtual function to avoid unnecessary
-             * vtable overhead
-             */
-            static void *create_event(const function_type &func) {
-                auto data = new function_type(func);
-                return reinterpret_cast<void *>(data);
-            }
-
-            static void destroy_event(void *data) noexcept {
-                delete reinterpret_cast<function_type *>(data);
-            }
-
-            static void call_on(void *func, void **data) noexcept {
-                static typename make_sequence<sizeof...(ArgsT)>::result seq;
-                call_impl(func, data, seq);
-            }
-        };
-
-        /**
          * Main Class
          */
         class event_emitter_attentive {
-            struct event {
-                void *data;
+            class event_base
+            {
+            public:
+                virtual ~event_base() = default;
                 std::vector<std::type_index> types;
-
-                void (*destroy_event)(void *) noexcept;
-
-                void (*call_on)(void *, void **) noexcept;
-
-                template<typename R, typename... ArgsT>
-                explicit event(const mpp::function<R(ArgsT...)> &func) {
-                    using impl = event_impl<R, ArgsT...>;
-                    data = impl::create_event(func);
-                    convert_typeinfo<ArgsT...>::convert(types);
-                    destroy_event = &impl::destroy_event;
-                    call_on = &impl::call_on;
+                virtual void call_on(void **) const noexcept = 0;
+            };
+            template<typename R, typename ...ArgsT>
+            class event_impl : public event_base {
+                mpp::function<R(ArgsT...)> m_func;
+                template<unsigned int... Seq>
+                inline void call_impl(void **data, const sequence<Seq...> &) const noexcept {
+                    m_func(get_argument<Seq, ArgsT>(data)...);
                 }
-
-                ~event() {
-                    destroy_event(data);
+            public:
+                explicit event_impl(const mpp::function<R(ArgsT...)> &func) : m_func(func) {
+                    convert_typeinfo<ArgsT...>::convert(this->types);
+                }
+                void call_on(void **data) const noexcept override
+                {
+                    call_impl(data, typename make_sequence<sizeof...(ArgsT)>::result());
                 }
             };
 
-            std::unordered_map<std::string, std::vector<event>> m_events;
+            std::unordered_map<std::string, std::vector<std::unique_ptr<event_base>>> m_events;
 
             template<typename R, typename... ArgsT>
             void on_impl(const std::string &name,
                          const mpp::function<R(ArgsT...)> &func) {
-                m_events[name].emplace_back(func);
+                m_events[name].emplace_back(new event_impl<R, ArgsT...>(func));
             }
 
         public:
@@ -317,10 +284,10 @@ namespace mpp {
                     void *arguments[sizeof...(ArgsT)];
                     expand_argument(arguments, mpp::forward<ArgsT>(args)...);
                     for (auto &it : event) {
-                        if (sizeof...(ArgsT) != it.types.size())
+                        if (sizeof...(ArgsT) != it->types.size())
                             throw_ex<mpp::runtime_error>("Invalid call to event handler: Wrong size of arguments.");
-                        check_typeinfo<0, ArgsT...>::check(it.types);
-                        it.call_on(it.data, arguments);
+                        check_typeinfo<0, ArgsT...>::check(it->types);
+                        it->call_on(arguments);
                     }
                 }
             }
