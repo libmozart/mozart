@@ -8,7 +8,6 @@
 
 #pragma once
 
-#include <forward_list>
 #include <mozart++/function>
 #include <mozart++/exception>
 #include <mozart++/type_traits>
@@ -91,7 +90,7 @@ namespace mpp {
         };
 
     private:
-        std::unordered_map<std::string, std::forward_list<handler_container>> _events;
+        std::unordered_map<std::string, std::vector<handler_container>> _events;
 
     public:
         event_emitter_fast() = default;
@@ -107,7 +106,7 @@ namespace mpp {
          */
         template<typename Handler>
         void on(const std::string &name, Handler handler) {
-            _events[name].push_front(handler_container(handler));
+            _events[name].emplace_back(handler);
         }
 
         /**
@@ -276,12 +275,12 @@ namespace mpp {
                 }
             };
 
-            std::unordered_map<std::string, std::forward_list<event>> m_events;
+            std::unordered_map<std::string, std::vector<event>> m_events;
 
             template<typename R, typename... ArgsT>
             void on_impl(const std::string &name,
                          const mpp::function<R(ArgsT...)> &func) {
-                m_events[name].emplace_front(func);
+                m_events[name].emplace_back(func);
             }
 
         public:
