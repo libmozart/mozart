@@ -105,6 +105,6 @@ Mozart++ 有两个 `namespace`, `mpp` 和 `mpp_impl`.
 ```
 MIT License
 
-Copyright (c) 2019 Covariant Institute
+Copyright (c) 2020 Covariant Institute
 ```
 
