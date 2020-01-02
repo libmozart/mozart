@@ -68,18 +68,26 @@ namespace mpp_impl {
                 template <typename F>
                 function_alias<F> *callable_ptr() {
                     using callee_arg_types = typename function_parser<function_alias<F>>::decayed_arg_types;
-                    if (_args_info == typeid(callee_arg_types)) {
-                        return reinterpret_cast<function_alias<F> *>(_handler.get());
-                    }
-                    return nullptr;
-                }
 
-                function_alias<void()> *callable_ptr() {
-                    // Directly check argument count
-                    // because _args_info == typeid(typelist::nil) is much slower here.
-                    if (_args_count == 0) {
-                        return reinterpret_cast<function_alias<void()> *>(_handler.get());
+                    // When callee didn't pass any argument,
+                    // we only need to check _arg_count.
+                    // Avoid typeid() call as much as possible.
+                    //
+                    // Note that:
+                    // This branch condition is always a constexpr, so don't
+                    // worry about the branch overhead.
+                    //
+                    if (mpp::typelist::empty_v<callee_arg_types>) {
+                        if (_args_count == 0) {
+                            return reinterpret_cast<function_alias<F> *>(_handler.get());
+                        }
+                    } else {
+                        if (_args_info == typeid(callee_arg_types)) {
+                            return reinterpret_cast<function_alias<F> *>(_handler.get());
+                        }
                     }
+
+                    // Otherwise, return nothing when type mismatch
                     return nullptr;
                 }
             };
