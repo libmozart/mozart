@@ -105,6 +105,6 @@ Contributions and ideas are welcomed through issues and PRs.
 ```
 MIT License
 
-Copyright (c) 2019 Covariant Institute
+Copyright (c) 2020 Covariant Institute
 ```
 
