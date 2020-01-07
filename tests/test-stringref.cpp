@@ -35,8 +35,9 @@ void process_command(string_ref command) {
 }
 
 int main() {
-    std::string s;
-    while (std::getline(std::cin, s)) {
-        process_command(s);
-    }
+    process_command("I love you");
+    process_command("run rm -rf");
+    process_command("sum 12345");
+    process_command("run f**k");
+    return 0;
 }
