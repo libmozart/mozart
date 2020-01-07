@@ -31,12 +31,12 @@ public:
      *
      * @tparam DataType
      */
-    template<typename T>
+    template <typename T>
     using default_allocator_provider = mpp::allocator<T>;
     /**
      * Unified definition
      */
-    template<typename T>
+    template <typename T>
     using default_allocator = allocator_type<T, default_allocate_buffer_size, default_allocator_provider>;
 
 private:
@@ -98,7 +98,7 @@ private:
      *
      * @tparam DataType
      */
-    template<typename T>
+    template <typename T>
     class stor_impl : public stor_base {
     public:
         /**
@@ -219,7 +219,7 @@ private:
     }
 
     // 存储方法的封装
-    template<typename T>
+    template <typename T>
     inline void store(const T &val) {
         if (sizeof(stor_impl<T>) <= stor_union::static_stor_size) {
             ::new(m_data.impl.data) stor_impl<T>(val);
@@ -263,7 +263,7 @@ public:
     any() {}
 
     // 自定义构造函数，未标记为 explicit 以允许隐式转换
-    template<typename T>
+    template <typename T>
     any(const T &val) {
         store(val);
     }
@@ -284,7 +284,7 @@ public:
     }
 
     // 赋值函数，实际上为重载赋值运算符
-    template<typename T>
+    template <typename T>
     inline any &operator=(const T &val) {
         recycle();
         store(val);
@@ -313,7 +313,7 @@ public:
     }
 
     // 提取数据方法封装
-    template<typename T>
+    template <typename T>
     inline T &get() {
         stor_base *ptr = get_handler();
         if (ptr->type() != typeid(T))
@@ -322,7 +322,7 @@ public:
     }
 
     // 常量重载
-    template<typename T>
+    template <typename T>
     inline const T &get() const {
         const stor_base *ptr = get_handler();
         if (ptr->type() != typeid(T))

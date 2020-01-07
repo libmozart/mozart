@@ -36,7 +36,7 @@ namespace mpp {
         }
     };
 
-    template<typename T, typename... ArgsT>
+    template <typename T, typename... ArgsT>
     void throw_ex(ArgsT &&... args) {
         T exception(std::forward<ArgsT>(args)...);
         MOZART_LOGCR(exception.what())

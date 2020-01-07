@@ -18,14 +18,14 @@ namespace mpp {
      *
      * @tparam IteratorT
      */
-    template<typename IteratorT>
+    template <typename IteratorT>
     class iterator_range {
         IteratorT begin_iterator, end_iterator;
 
     public:
         // TODO: Add SFINAE to test that the Container's iterators match the range's
         //      iterators.
-        template<typename Container>
+        template <typename Container>
         iterator_range(Container &&c)
         // TODO: Consider ADL/non-member begin/end calls.
                 : begin_iterator(c.begin()), end_iterator(c.end()) {}
@@ -53,12 +53,12 @@ namespace mpp {
      * in for loops a bit easier. Analogous to std::make_pair().
      */
 
-    template<class T>
+    template <class T>
     iterator_range<T> make_range(T x, T y) {
         return iterator_range<T>(std::move(x), std::move(y));
     }
 
-    template<typename T>
+    template <typename T>
     iterator_range<T> make_range(std::pair<T, T> p) {
         return iterator_range<T>(std::move(p.first), std::move(p.second));
     }
