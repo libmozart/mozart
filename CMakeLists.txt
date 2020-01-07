@@ -41,13 +41,13 @@ add_library(mozart++ STATIC
 set_target_properties(mozart++ PROPERTIES LINKER_LANGUAGE CXX)
 
 ## test and benchmark targets here
-add_executable(test-optional tests/test-optional.cpp)
-add_executable(test-event tests/test-event.cpp)
-add_executable(test-fp-curry tests/test-fp-curry.cpp)
-add_executable(test-stream tests/test-stream.cpp)
-add_executable(test-stringref tests/test-stringref.cpp)
-add_executable(test-typelist tests/test-typelist.cpp)
-add_executable(benchmark-event-emitter tests/benchmark-event-emitter.cpp)
+file(GLOB_RECURSE CPP_SRC_LIST tests/test-*.cpp)
+foreach(v ${CPP_SRC_LIST})
+    string(REGEX MATCH "tests/.*" relative_path ${v})
+    string(REGEX REPLACE "tests/" "" target_name ${relative_path})
+    string(REGEX REPLACE ".cpp" "" target_name ${target_name})
 
-target_link_libraries(test-event mozart++)
-target_link_libraries(benchmark-event-emitter mozart++)
+    add_executable(${target_name} ${v})
+    target_link_libraries(${target_name} mozart++)
+    add_test(${target_name} ${target_name})
+endforeach()
