@@ -14,7 +14,7 @@
 namespace mpp {
     using std::allocator;
 
-    template<typename T, size_t blck_size, template<typename> class allocator_t = allocator>
+    template <typename T, size_t blck_size, template <typename> class allocator_t = allocator>
     class allocator_type final {
         T *mPool[blck_size];
         allocator_t<T> mAlloc;
@@ -33,7 +33,7 @@ namespace mpp {
                 mAlloc.deallocate(mPool[--mOffset], 1);
         }
 
-        template<typename... ArgsT>
+        template <typename... ArgsT>
         inline T *alloc(ArgsT &&... args) {
             T *ptr = nullptr;
             if (mOffset > 0)
@@ -53,7 +53,7 @@ namespace mpp {
         }
     };
 
-    template<typename T, size_t blck_size, template<typename> class allocator_t = allocator>
+    template <typename T, size_t blck_size, template <typename> class allocator_t = allocator>
     class plain_allocator_type final {
         allocator_t<T> mAlloc;
 
@@ -64,7 +64,7 @@ namespace mpp {
 
         ~plain_allocator_type() = default;
 
-        template<typename... ArgsT>
+        template <typename... ArgsT>
         inline T *alloc(ArgsT &&... args) {
             T *ptr = mAlloc.allocate(1);
             mAlloc.construct(ptr, forward<ArgsT>(args)...);

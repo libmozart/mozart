@@ -7,6 +7,7 @@ insert_final_newline = true
 trim_trailing_whitespace = true
 indent_style = space
 tab_width = 4
+ij_c_space_before_template_declaration_lt = true
 
 [Makefile]
 indent_style = tab

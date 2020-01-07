@@ -19,11 +19,11 @@ std::string show(const char *name) {
 
 static constexpr int TIMES = 1000000;
 
-template<typename EE>
+template <typename EE>
 class BenchmarkClass : public EE {
 };
 
-template<typename EE>
+template <typename EE>
 struct BenchmarkRunner {
     static void doit() {
         BenchmarkClass<EE> ee;
