@@ -13,13 +13,18 @@
 #include <string>
 
 namespace mpp {
-    class runtime_error final : public std::exception {
+    /**
+     * This class represents unexpected runtime exceptions.
+     * User-defined exceptions can derive from this base class.
+     */
+    class runtime_error : public std::exception {
         std::string mWhat = "Runtime Error";
 
     public:
         runtime_error() = default;
 
-        explicit runtime_error(const std::string &str) noexcept : mWhat("Runtime Error: " + str) {}
+        explicit runtime_error(const std::string &str) noexcept
+            : mWhat("Runtime Error: " + str) {}
 
         runtime_error(const runtime_error &) = default;
 
@@ -38,7 +43,10 @@ namespace mpp {
 
     template <typename T, typename... ArgsT>
     void throw_ex(ArgsT &&... args) {
-        T exception(std::forward<ArgsT>(args)...);
+        static_assert(std::is_base_of<std::exception, T>::value,
+            "Only std::exception and its derived classes can be thrown");
+
+        T exception{std::forward<ArgsT>(args)...};
         MOZART_LOGCR(exception.what())
 #ifdef MOZART_NOEXCEPT
         std::terminate();
