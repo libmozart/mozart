@@ -190,7 +190,7 @@ private:
     inline stor_base *get_handler() {
         switch (m_data.status) {
             case stor_status::null:
-                throw_ex<runtime_error>("Access null any object.");
+                throw_ex<mpp::runtime_error>("Access null any object.");
             case stor_status::data:
                 return reinterpret_cast<stor_base *>(m_data.impl.data);
             case stor_status::ptr:
@@ -202,7 +202,7 @@ private:
     inline const stor_base *get_handler() const {
         switch (m_data.status) {
             case stor_status::null:
-                throw_ex<runtime_error>("Access null any object.");
+                throw_ex<mpp::runtime_error>("Access null any object.");
             case stor_status::data:
                 return reinterpret_cast<const stor_base *>(m_data.impl.data);
             case stor_status::ptr:
@@ -317,7 +317,7 @@ public:
     inline T &get() {
         stor_base *ptr = get_handler();
         if (ptr->type() != typeid(T))
-            throw_ex<runtime_error>("Access wrong type of any.");
+            throw_ex<mpp::runtime_error>("Access wrong type of any.");
         return static_cast<stor_impl<T> *>(ptr)->data;
     }
 
@@ -326,7 +326,7 @@ public:
     inline const T &get() const {
         const stor_base *ptr = get_handler();
         if (ptr->type() != typeid(T))
-            throw_ex<runtime_error>("Access wrong type of any.");
+            throw_ex<mpp::runtime_error>("Access wrong type of any.");
         return static_cast<const stor_impl<T> *>(ptr)->data;
     }
 };
