@@ -37,7 +37,7 @@ namespace mpp_impl {
             public:
                 template <typename Handler>
                 explicit handler_container(Handler &&handler)
-                        :_args_info(typeid(void)) {
+                    :_args_info(typeid(void)) {
                     // handler-dependent types
                     using wrapper_type = decltype(make_function(handler));
                     using arg_types = typename function_parser<wrapper_type>::decayed_arg_types;
@@ -54,13 +54,13 @@ namespace mpp_impl {
                     // use std::shared_ptr to manage the allocated memory
                     // (char *) and (void *) are known as universal pointers.
                     _handler = std::shared_ptr<char>(
-                            // wrapper function itself
-                            reinterpret_cast<char *>(fn),
+                        // wrapper function itself
+                        reinterpret_cast<char *>(fn),
 
-                            // wrapper function deleter
-                            [](char *ptr) {
-                                delete reinterpret_cast<wrapper_type *>(ptr);
-                            }
+                        // wrapper function deleter
+                        [](char *ptr) {
+                            delete reinterpret_cast<wrapper_type *>(ptr);
+                        }
                     );
                 }
 
@@ -247,7 +247,7 @@ namespace mpp_impl {
                 }
 
                 void call_on(void **data) const noexcept override {
-                    call_impl(data, typename make_sequence<sizeof...(ArgsT)>::result());
+                    call_impl(data, make_sequence_t<sizeof...(ArgsT)>());
                 }
             };
 
