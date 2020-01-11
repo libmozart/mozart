@@ -20,30 +20,31 @@ namespace mpp {
      */
     template <typename IteratorT>
     class iterator_range {
-        IteratorT begin_iterator, end_iterator;
+        IteratorT _begin_iterator;
+        IteratorT _end_iterator;
 
     public:
         // TODO: Add SFINAE to test that the Container's iterators match the range's
         //      iterators.
         template <typename Container>
         iterator_range(Container &&c)
-        // TODO: Consider ADL/non-member begin/end calls.
-                : begin_iterator(c.begin()), end_iterator(c.end()) {}
+        // TODO: Consider std::begin()/std::end() calls.
+                : _begin_iterator(c.begin()), _end_iterator(c.end()) {}
 
         iterator_range(IteratorT begin_iterator, IteratorT end_iterator)
-                : begin_iterator(std::move(begin_iterator)),
-                  end_iterator(std::move(end_iterator)) {}
+                : _begin_iterator(std::move(begin_iterator)),
+                  _end_iterator(std::move(end_iterator)) {}
 
         IteratorT begin() const {
-            return begin_iterator;
+            return _begin_iterator;
         }
 
         IteratorT end() const {
-            return end_iterator;
+            return _end_iterator;
         }
 
         bool empty() const {
-            return begin_iterator == end_iterator;
+            return _begin_iterator == _end_iterator;
         }
     };
 
