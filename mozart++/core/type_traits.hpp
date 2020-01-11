@@ -41,7 +41,7 @@ namespace mpp {
     };
 
     /**
-     * Short for {@code typename make_sequence<Maximum>::result}
+     * Short for {@code typename make_sequence<Maximum>::type}
      */
     template <unsigned int N>
     using make_sequence_t = typename make_sequence<N>::type;
