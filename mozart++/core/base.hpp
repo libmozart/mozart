@@ -109,7 +109,9 @@
 #endif
 
 namespace mpp {
-// Path seperator and delimiter
+    /**
+     * Path seperator and delimiter
+     */
 #ifdef MOZART_PLATFORM_WIN32
     constexpr char path_separator = '\\';
     constexpr char path_delimiter = ';';
@@ -117,23 +119,27 @@ namespace mpp {
     constexpr char path_separator = '/';
     constexpr char path_delimiter = ':';
 #endif
+
     using byte_t = std::uint8_t;
-// Type importing
+
+    /* Import basic types and functions */
     using std::size_t;
-// Function importing
     using std::declval;
     using std::forward;
     using std::memcpy;
     using std::move;
     using std::swap;
-// Alignment
-    template <typename type> using aligned_type =
-    typename std::aligned_storage<sizeof(type), std::alignment_of<type>::value>::type;
 
-    template <size_t len, typename ...types> using aligned_union =
-    typename std::aligned_union<len, types...>::type;
+    /**
+     * Alignment
+     */
+    template <typename type>
+    using aligned_type = std::aligned_storage_t<sizeof(type), std::alignment_of<type>::value>;
 
-    inline byte_t *uninitialized_copy(byte_t *, byte_t *, size_t) noexcept;
+    template <size_t len, typename ...types>
+    using aligned_union = std::aligned_union_t<len, types...>;
+
+    inline byte_t *uninitialized_copy(byte_t *dest, byte_t *src, size_t count) noexcept;
 
     template <typename T, typename ...Args>
     inline static void construct_at(byte_t *ptr, Args &&...args) {
@@ -195,10 +201,15 @@ namespace mpp {
         singleton() = default;
     };
 
-    // Name demangle
-    std::string cxx_demangle(const char *);
+    /**
+     * Name demangle.
+     *
+     * @param mangled mangled type name.
+     * @return Human-readable type name.
+     */
+    std::string cxx_demangle(const char *mangled);
 }
 
 namespace mpp_impl {
-// Not implemented yet
+    // Not implemented yet
 }
