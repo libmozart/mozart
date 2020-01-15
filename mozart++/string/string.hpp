@@ -33,7 +33,7 @@ namespace mpp {
     public:
         static constexpr size_t npos = ~size_t(0);
 
-        using iterator = const char *;
+        using iterator = char *;
         using const_iterator = const char *;
         using size_type = size_t;
 
