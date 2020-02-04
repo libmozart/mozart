@@ -9,16 +9,14 @@
 
 #include <vector>
 #include <string>
+#include <unordered_map>
 #include <memory>
+#include <sstream>
 #include <mozart++/exception>
 #include <mozart++/system/fdstream.hpp>
 
-#ifdef _WIN32
-#include <sstream>
-#else
-
+#ifndef _WIN32
 #include <sys/wait.h>
-
 #endif
 
 namespace mpp_impl {
@@ -35,6 +33,8 @@ namespace mpp_impl {
 
     struct process_startup {
         std::vector<std::string> _cmdline;
+        std::unordered_map<std::string, std::string> _env;
+        std::string _cwd;
         redirect_info _stdin;
         redirect_info _stdout;
         redirect_info _stderr;
@@ -97,6 +97,11 @@ namespace mpp_impl {
         sa.nLength = sizeof(SECURITY_ATTRIBUTES);
         sa.bInheritHandle = true;
         sa.lpSecurityDescriptor = nullptr;
+
+        if (!SetHandleInformation(pstdin[PIPE_WRITE], HANDLE_FLAG_INHERIT, 0)) {
+            mpp::throw_ex<mpp::runtime_error>("unable to set handle information on stdin");
+        }
+
         si.hStdInput = pstdin[PIPE_READ];
         si.hStdOutput = pstdout[PIPE_WRITE];
 
@@ -123,8 +128,9 @@ namespace mpp_impl {
 
         std::string command = ss.str();
 
-        if (!CreateProcessA(nullptr, &command[0], nullptr, nullptr, false, 0,
-                            nullptr, /* Current Directory in const char* */nullptr, &si, &pi)) {
+        if (!CreateProcess(nullptr, const_cast<char *>(command.c_str()),
+                           nullptr, nullptr, true, 0, nullptr,
+			               startup._cwd.c_str(), &si, &pi)) {
             mpp::throw_ex<mpp::runtime_error>("unable to fork subprocess");
         }
 
@@ -180,21 +186,42 @@ namespace mpp_impl {
             close_fd(pstderr[PIPE_WRITE]);
 
             // copy command-line arguments
-            size_t size = startup._cmdline.size();
-            char *argv[size + 1];
-            for (std::size_t i = 0; i < size; ++i) {
+            size_t asize = startup._cmdline.size();
+            char *argv[asize + 1];
+
+            // argv is always terminated with a nullptr
+            argv[asize] = nullptr;
+
+            for (std::size_t i = 0; i < asize; ++i) {
                 argv[i] = strdup(startup._cmdline[i].c_str());
             }
 
-            // argv is always terminated with a nullptr
-            argv[size] = nullptr;
+            // change cwd
+            if (!startup._cwd.empty() && chdir(startup._cwd.c_str()) != 0) {
+                mpp::throw_ex<mpp::runtime_error>("unable to change current working directory");
+            }
+
+            // copy environment variables
+            size_t esize = startup._env.size();
+            char *envp[esize + 1];
+
+            std::stringstream buffer;
+            char **penv = envp;
+            for (const auto &e : startup._env) {
+                buffer.clear();
+                buffer << e.first << "=" << e.second;
+                *penv++ = strdup(buffer.str().c_str());
+            }
 
             // run subprocess
-            ::execv(argv[0], argv);
+            ::execve(argv[0], argv, envp);
 
             // throw if failed to execve()
-            for (std::size_t i = 0; i < size; ++i) {
+            for (std::size_t i = 0; i < asize; ++i) {
                 ::free(argv[i]);
+            }
+            for (std::size_t i = 0; i < esize; ++i) {
+                ::free(envp[i]);
             }
             mpp::throw_ex<mpp::runtime_error>("unable to exec commands in subprocess");
 
@@ -382,22 +409,6 @@ namespace mpp {
 
         process_builder &operator=(const process_builder &) = default;
 
-    private:
-        process_builder &redirect_stdin(fd_type target) {
-            _startup._stdin._target = target;
-            return *this;
-        }
-
-        process_builder &redirect_stdout(fd_type target) {
-            _startup._stdout._target = target;
-            return *this;
-        }
-
-        process_builder &redirect_stderr(fd_type target) {
-            _startup._stderr._target = target;
-            return *this;
-        }
-
     public:
         process_builder &command(const std::string &command) {
             if (_startup._cmdline.empty()) {
@@ -415,6 +426,31 @@ namespace mpp {
             } else {
                 // invalid operation, do nothing
             }
+            return *this;
+        }
+
+        process_builder& environment(const std::string &key, const std::string &value) {
+            _startup._env.emplace(key, value);
+            return *this;
+        }
+
+        process_builder &redirect_stdin(fd_type target) {
+            _startup._stdin._target = target;
+            return *this;
+        }
+
+        process_builder &redirect_stdout(fd_type target) {
+            _startup._stdout._target = target;
+            return *this;
+        }
+
+        process_builder &redirect_stderr(fd_type target) {
+            _startup._stderr._target = target;
+            return *this;
+        }
+
+        process_builder &directory(const std::string &cwd) {
+            _startup._cwd = cwd;
             return *this;
         }
 
