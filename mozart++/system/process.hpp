@@ -8,10 +8,16 @@
 #pragma once
 
 namespace mpp_impl {
-    namespace process_impl {
-
-    }
+    class process_impl {
+#ifdef _MSC_VER
+#endif
+    };
 }
 
 namespace mpp {
+    class process {
+    private:
+
+    public:
+    };
 }
