@@ -166,7 +166,7 @@ namespace mpp_impl {
              */
             if (startup._redirect_error) {
                 // redirect stderr to stdout
-                dup2(pstdout[PIPE_WRITE], STDOUT_FILENO);
+                dup2(pstdout[PIPE_WRITE], STDERR_FILENO);
             } else {
                 // redirect stderr to a file
                 if (!startup._stderr.redirected()) {
@@ -342,15 +342,15 @@ namespace mpp {
             mpp_impl::close_process(_info);
         }
 
-        std::ostream &get_stdin() {
+        std::ostream &in() {
             return *_stdin;
         }
 
-        std::istream &get_stdout() {
+        std::istream &out() {
             return *_stdout;
         }
 
-        std::istream &get_stderr() {
+        std::istream &err() {
             return *_stderr;
         }
 
@@ -418,8 +418,8 @@ namespace mpp {
             return *this;
         }
 
-        process_builder &redirect_error() {
-            _startup._redirect_error = true;
+        process_builder &redirect_error(bool r) {
+            _startup._redirect_error = r;
             return *this;
         }
 
