@@ -22,6 +22,7 @@
 namespace mpp_impl {
 #ifdef _WIN32
     using fd_type = HANDLE;
+    static constexpr fd_type FD_INVALID = nullptr;
 
     ssize_t read(fd_type handle, void *buf, size_t count) {
         DWORD dwRead;
@@ -43,6 +44,7 @@ namespace mpp_impl {
 
 #else
     using fd_type = int;
+    static constexpr fd_type FD_INVALID = -1;
     using ::read;
     using ::write;
 #endif
