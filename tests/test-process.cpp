@@ -13,7 +13,7 @@ using mpp::process;
 using mpp::process_builder;
 
 int main() {
-    process p = process::exec("bash");
+    process p = process::exec("/bin/bash");
     p.get_stdin() << "ls /\n";
     p.get_stdin() << "exit 0\n";
 

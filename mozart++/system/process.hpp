@@ -129,8 +129,8 @@ namespace mpp_impl {
         info._pid = pi.hProcess;
         info._tid = pi.hThread;
         info._stdin = pstdin[PIPE_WRITE];
-        info._stdout = pstdin[PIPE_READ];
-        info._stderr = pstdin[PIPE_READ];
+        info._stdout = pstdout[PIPE_READ];
+        info._stderr = pstderr[PIPE_READ];
     }
 #else
 
@@ -216,8 +216,8 @@ namespace mpp_impl {
 
             info._pid = pid;
             info._stdin = pstdin[PIPE_WRITE];
-            info._stdout = pstdin[PIPE_READ];
-            info._stderr = pstdin[PIPE_READ];
+            info._stdout = pstdout[PIPE_READ];
+            info._stderr = pstderr[PIPE_READ];
 
             // on *nix systems, fork() doesn't create threads to run process
             info._tid = FD_INVALID;
