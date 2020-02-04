@@ -205,9 +205,13 @@ namespace mpp_impl {
             size_t esize = startup._env.size();
             char *envp[esize + 1];
 
+            // for safety, envp will be terminated with a nullptr
+            envp[esize] = nullptr;
+
             std::stringstream buffer;
             char **penv = envp;
             for (const auto &e : startup._env) {
+                buffer.str("");
                 buffer.clear();
                 buffer << e.first << "=" << e.second;
                 *penv++ = strdup(buffer.str().c_str());

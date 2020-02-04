@@ -46,17 +46,16 @@ void test_stderr() {
 
 void test_env() {
     process p = process_builder().command("/bin/bash")
-        .environment("VAR", "fuckcpp")
+        .environment("VAR1", "fuck")
+        .environment("VAR2", "cpp")
         .start();
 
-    p.in() << "echo $VAR\n";
+    p.in() << "echo $VAR1$VAR2\n";
     p.in() << "exit\n";
     p.wait_for();
 
     std::string s;
     p.out() >> s;
-
-    printf("process: test-env: VAR = %s\n", s.c_str());
 
     if (s != "fuckcpp") {
         printf("process: test-env: failed\n");
