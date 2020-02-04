@@ -1,6 +1,10 @@
-//
-// Created by kiva on 2020/2/4.
-//
+/**
+ * Mozart++ Template Library
+ * Licensed under MIT License
+ * Copyright (c) 2020 Covariant Institute
+ * Website: https://covariant.cn/
+ * Github:  https://github.com/covariant-institute/
+ */
 
 #include <cstdio>
 #include <mozart++/system/fdstream.hpp>
