@@ -17,6 +17,7 @@
 #include <mozart++/exception>
 #include <mozart++/stream>
 #include <mozart++/function>
+#include <algorithm>
 #include <climits>
 
 namespace mpp {
