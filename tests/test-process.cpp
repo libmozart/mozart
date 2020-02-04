@@ -12,10 +12,10 @@
 using mpp::process;
 using mpp::process_builder;
 
-int main() {
-    process p = process::exec("/bin/bash");
+int main(int argc, const char **argv) {
+    process p = process::exec(argv[1] ? argv[1] : "/bin/bash");
     p.get_stdin() << "ls /\n";
-    p.get_stdin() << "exit 0\n";
+    p.get_stdin() << "exit\n";
 
     std::string s;
     while (std::getline(p.get_stdout(), s)) {

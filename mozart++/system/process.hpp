@@ -16,7 +16,9 @@
 #ifdef _WIN32
 #include <sstream>
 #else
+
 #include <sys/wait.h>
+
 #endif
 
 namespace mpp_impl {
@@ -173,15 +175,22 @@ namespace mpp_impl {
                 dup2(pstderr[PIPE_WRITE], STDERR_FILENO);
             }
 
+            close_fd(pstdin[PIPE_READ]);
+            close_fd(pstdout[PIPE_WRITE]);
+            close_fd(pstderr[PIPE_WRITE]);
+
             // copy command-line arguments
             size_t size = startup._cmdline.size();
-            char *argv[size];
+            char *argv[size + 1];
             for (std::size_t i = 0; i < size; ++i) {
                 argv[i] = strdup(startup._cmdline[i].c_str());
             }
 
+            // argv is always terminated with a nullptr
+            argv[size] = nullptr;
+
             // run subprocess
-            ::execve(argv[0], argv, nullptr);
+            ::execv(argv[0], argv);
 
             // throw if failed to execve()
             for (std::size_t i = 0; i < size; ++i) {
@@ -351,6 +360,9 @@ namespace mpp {
 
     public:
         static process exec(const std::string &command);
+
+        static process exec(const std::string &command,
+                            const std::vector<std::string> &args);
     };
 
     class process_builder {
@@ -420,5 +432,10 @@ namespace mpp {
 
     process process::exec(const std::string &command) {
         return process_builder().command(command).start();
+    }
+
+    process process::exec(const std::string &command,
+                 const std::vector<std::string> &args) {
+        return process_builder().command(command).arguments(args).start();
     }
 }
