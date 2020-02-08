@@ -279,7 +279,7 @@ namespace mpp_impl {
     bool redirect_or_pipe(const redirect_info &r, fd_type fds[2]) {
         if (!r.redirected()) {
             // no redirect target specified
-            return pipe(fds) == 0;
+            return create_pipe(fds) == 0;
         }
 
         fds[PIPE_READ] = r._target;
