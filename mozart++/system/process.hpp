@@ -12,16 +12,26 @@
 #include <unordered_map>
 #include <memory>
 #include <sstream>
+
 #include <mozart++/exception>
+#include <mozart++/system/file.hpp>
+#include <mozart++/system/pipe.hpp>
 #include <mozart++/system/fdstream.hpp>
 
-#ifndef _WIN32
+#ifdef _WIN32
+#include <Windows.h>
+#else
 #include <sys/wait.h>
 #endif
 
 namespace mpp_impl {
-    static constexpr int PIPE_READ = 0;
-    static constexpr int PIPE_WRITE = 1;
+    using mpp::fd_type;
+    using mpp::FD_INVALID;
+    using mpp::close_fd;
+    using mpp::close_pipe;
+    using mpp::create_pipe;
+    using mpp::PIPE_WRITE;
+    using mpp::PIPE_READ;
 
     struct redirect_info {
         fd_type _target = FD_INVALID;
@@ -52,35 +62,6 @@ namespace mpp_impl {
         fd_type _stdout = FD_INVALID;
         fd_type _stderr = FD_INVALID;
     };
-
-    void close_fd(fd_type &fd) {
-        if (fd == FD_INVALID) {
-            return;
-        }
-#ifdef _WIN32
-        CloseHandle(fd);
-#else
-        ::close(fd);
-#endif
-        fd = FD_INVALID;
-    }
-
-    void close_pipe(fd_type fds[2]) {
-        close_fd(fds[PIPE_READ]);
-        close_fd(fds[PIPE_WRITE]);
-    }
-
-    bool create_pipe(fd_type fds[2]) {
-#ifdef _WIN32
-        SECURITY_ATTRIBUTES sa;
-        sa.nLength = sizeof(SECURITY_ATTRIBUTES);
-        sa.bInheritHandle = true;
-        sa.lpSecurityDescriptor = nullptr;
-        return CreatePipe(&fds[PIPE_READ], &fds[PIPE_WRITE], &sa, 0);
-#else
-        return ::pipe(fds) == 0;
-#endif
-    }
 
 #ifdef _WIN32
     void create_process_win32(const process_startup &startup,
@@ -279,7 +260,7 @@ namespace mpp_impl {
     bool redirect_or_pipe(const redirect_info &r, fd_type fds[2]) {
         if (!r.redirected()) {
             // no redirect target specified
-            return create_pipe(fds) == 0;
+            return create_pipe(fds);
         }
 
         fds[PIPE_READ] = r._target;

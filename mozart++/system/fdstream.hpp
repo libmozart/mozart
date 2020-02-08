@@ -10,53 +10,15 @@
 #include <istream>
 #include <ostream>
 #include <streambuf>
-#include <cstdio>
-#include <cstring>
-
-#ifdef _WIN32
-#include <Windows.h>
-#else
-#include <unistd.h>
-#endif
-
-namespace mpp_impl {
-#ifdef _WIN32
-    using fd_type = HANDLE;
-    static constexpr fd_type FD_INVALID = nullptr;
-
-    ssize_t read(fd_type handle, void *buf, size_t count) {
-        DWORD dwRead;
-        if (ReadFile(handle, buf, count, &dwRead, nullptr)) {
-            return dwRead;
-        } else {
-            return 0;
-        }
-    }
-
-    ssize_t write(fd_type handle, const void *buf, size_t count) {
-        DWORD dwWritten;
-        if (WriteFile(handle, buf, count, &dwWritten, nullptr)) {
-            return dwWritten;
-        } else {
-            return 0;
-        }
-    }
-
-#else
-    using fd_type = int;
-    static constexpr fd_type FD_INVALID = -1;
-    using ::read;
-    using ::write;
-#endif
-}
+#include <mozart++/system/file.hpp>
 
 namespace mpp {
     class fdoutbuf : public std::streambuf {
     private:
-        mpp_impl::fd_type _fd;
+        mpp::fd_type _fd;
 
     public:
-        explicit fdoutbuf(mpp_impl::fd_type fd)
+        explicit fdoutbuf(mpp::fd_type fd)
             : _fd(fd) {
         }
 
@@ -64,7 +26,7 @@ namespace mpp {
         int_type overflow(int_type c) override {
             if (c != EOF) {
                 char z = c;
-                if (mpp_impl::write(_fd, &z, 1) != 1) {
+                if (mpp::write(_fd, &z, 1) != 1) {
                     return EOF;
                 }
             }
@@ -73,7 +35,7 @@ namespace mpp {
 
         std::streamsize xsputn(const char *s,
                                std::streamsize num) override {
-            return mpp_impl::write(_fd, s, num);
+            return mpp::write(_fd, s, num);
         }
     };
 
@@ -89,7 +51,7 @@ namespace mpp {
 
     class fdinbuf : public std::streambuf {
     private:
-        mpp_impl::fd_type _fd;
+        mpp::fd_type _fd;
 
     protected:
         /**
@@ -105,7 +67,7 @@ namespace mpp {
         char _buffer[BUFFER_SIZE + PUTBACK_SIZE]{0};
 
     public:
-        explicit fdinbuf(mpp_impl::fd_type fd)
+        explicit fdinbuf(mpp::fd_type fd)
             : _fd(fd) {
             setg(_buffer + PUTBACK_SIZE,     // beginning of putback area
                 _buffer + PUTBACK_SIZE,     // read position
@@ -133,7 +95,7 @@ namespace mpp {
                 backSize);
 
             // read at most BUFFER_SIZE new characters
-            int num = mpp_impl::read(_fd, _buffer + PUTBACK_SIZE, BUFFER_SIZE);
+            int num = mpp::read(_fd, _buffer + PUTBACK_SIZE, BUFFER_SIZE);
             if (num <= 0) {
                 // it might be error happened somewhere or EOF encountered
                 // we simply return EOF
