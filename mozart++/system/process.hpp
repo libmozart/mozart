@@ -23,10 +23,9 @@
 #ifdef MOZART_PLATFORM_WIN32
 #include <Windows.h>
 #else
-
+#include <sys/stat.h>
 #include <sys/wait.h>
 #include <csignal>
-
 #endif
 
 namespace mpp_impl {
@@ -330,20 +329,35 @@ namespace mpp_impl {
         return code;
 #else
         int status;
-        if (waitpid(info._pid, &status, 0) == info._pid) {
-            if (WIFEXITED(status)) {
-                return WEXITSTATUS(status);
-            }
-
-            if (WIFSIGNALED(status)) {
-                return WTERMSIG(status);
-            }
-
-            if (WIFSTOPPED(status)) {
-                return WSTOPSIG(status);
+        while (waitpid(info._pid, &status, 0) < 0) {
+            switch (errno) {
+                case ECHILD:
+                    return 0;
+                case EINTR:
+                    break;
+                default:
+                    return -1;
             }
         }
-        return 0;
+
+        if (WIFEXITED(status)) {
+            // The child exited normally, get its exit code
+            return WEXITSTATUS(status);
+        } else if (WIFSIGNALED(status)) {
+            // The child exited because of a signal.
+            // The best value to return is 0x80 + signal number,
+            // because that is what all Unix shells do, and because
+            // it allows callers to distinguish between process exit and
+            // oricess death by signal.
+            //
+            // Breaking changes happens if we are running on solaris:
+            // the historical behaviour on Solaris is to return the
+            // original signal number, but we will ignore that!
+            return 0x80 + WTERMSIG(status);
+        } else {
+            // unknown exit code, pass it through
+            return status;
+        }
 #endif
     }
 
@@ -352,6 +366,63 @@ namespace mpp_impl {
         TerminateProcess(info._pid, 0);
 #else
         kill(info._pid, force ? SIGKILL : SIGTERM);
+#endif
+    }
+
+    bool process_exited(const process_info &info) {
+#ifdef MOZART_PLATFORM_WIN32
+        // TODO
+        return true;
+#else
+        // if WNOHANG was specified and one or more child(ren)
+        // specified by pid exist, but have not yet changed state,
+        // then 0 is returned. On error, -1 is returned.
+        int result = waitpid(info._pid, nullptr, WNOHANG);
+
+        if (result == -1) {
+            if (errno != ECHILD) {
+                // when WNOHANG was set, errno could only be ECHILD
+                mpp::throw_ex<mpp::runtime_error>("should not reach here");
+            }
+
+            // waitpid() cannot find the child process identified by pid,
+            // there are two cases of this situation depending on signal set
+            struct sigaction sa{};
+            if (sigaction(SIGCHLD, nullptr, &sa) != 0) {
+                // only happens when kernel bug
+                mpp::throw_ex<mpp::runtime_error>("should not reach here");
+            }
+
+#if defined(__APPLE__)
+            void *handler = reinterpret_cast<void *>(sa.__sigaction_u.__sa_handler);
+#elif defined(__linux__)
+            void *handler = reinterpret_cast<void *>(sa.sa_handler);
+#endif
+
+            if (handler == reinterpret_cast<void *>(SIG_IGN)) {
+                // in this situation we cannot check whether
+                // a child process has exited in common way, because
+                // the child process is not belong to us any more, and
+                // the kernel will move its owner to init without notifying us.
+                // so we will try the fallback method.
+                std::string path = std::string("/proc/") + std::to_string(info._pid);
+                struct stat buf{};
+
+                // when /proc/<pid> doesn't exist, the process has exited.
+                // there will be race conditions: our process exited and
+                // another process started with the same pid, but we have
+                // no way to check that.
+                return stat(path.c_str(), &buf) == -1 && errno == ENOENT;
+
+            } else {
+                // we didn't set SIG_IGN for SIGCHLD
+                // there is only one case here theoretically:
+                // the child has exited too early before we checked it.
+                return true;
+            }
+        }
+
+        return result == 0;
 #endif
     }
 }
@@ -408,7 +479,7 @@ namespace mpp {
         }
 
         int wait_for() {
-            if (_exit_code >= 0) {
+            if (is_exited() && _exit_code >= 0) {
                 return _exit_code;
             }
             _exit_code = mpp_impl::wait_for(_info);
@@ -416,7 +487,7 @@ namespace mpp {
         }
 
         bool is_exited() const {
-            return _exit_code >= 0;
+            return mpp_impl::process_exited(_info);
         }
 
         void interrupt(bool force = false) {
