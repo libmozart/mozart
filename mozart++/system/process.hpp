@@ -22,6 +22,7 @@
 #include <Windows.h>
 #else
 #include <sys/wait.h>
+#include <csignal>
 #endif
 
 namespace mpp_impl {
