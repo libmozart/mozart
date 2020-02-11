@@ -338,6 +338,7 @@ namespace mpp_impl {
 
     void terminate_process(const process_info &info, bool force) {
 #ifdef _WIN32
+        TerminateProcess(info._pid, 0);
 #else
         kill(info._pid, force ? SIGKILL : SIGTERM);
 #endif
