@@ -184,7 +184,8 @@ namespace mpp {
          * @param o default value
          * @return reference to the object or to the default object
          */
-        T &get_or(T &&o) {
+        template <typename U>
+        std::enable_if_t<std::is_same<T, U>::value, T> &get_or(U &&o) {
             if (ptr() == nullptr) {
                 return o;
             }
@@ -200,7 +201,8 @@ namespace mpp {
          * @param o default value
          * @return reference to the object or to the default object
          */
-        const T &get_or(T &&o) const {
+        template <typename U>
+        const std::enable_if_t<std::is_same<T, U>::value, T> &get_or(U &&o) const {
             if (ptr() == nullptr) {
                 return o;
             }
