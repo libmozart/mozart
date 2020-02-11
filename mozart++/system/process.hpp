@@ -401,7 +401,7 @@ namespace mpp_impl {
 
             if (handler == reinterpret_cast<void *>(SIG_IGN)) {
                 // in this situation we cannot check whether
-                // a child process has exited in common way, because
+                // a child process has exited in normal way, because
                 // the child process is not belong to us any more, and
                 // the kernel will move its owner to init without notifying us.
                 // so we will try the fallback method.
@@ -410,8 +410,9 @@ namespace mpp_impl {
 
                 // when /proc/<pid> doesn't exist, the process has exited.
                 // there will be race conditions: our process exited and
-                // another process started with the same pid, but we have
-                // no way to check that.
+                // another process started with the same pid.
+                // to eliminate this case, we should check /proc/<pid>/cmdline
+                // but it's too complex.
                 return stat(path.c_str(), &buf) == -1 && errno == ENOENT;
 
             } else {
