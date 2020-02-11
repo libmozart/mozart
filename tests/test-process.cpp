@@ -7,6 +7,7 @@
  */
 
 #include <cstdio>
+#include <cstdlib>
 #include <mozart++/system/process.hpp>
 
 using mpp::process;
@@ -41,6 +42,7 @@ void test_stderr() {
 
     if (s != "fuckcpp") {
         printf("process: test-stderr: failed\n");
+        exit(1);
     }
 }
 
@@ -59,6 +61,7 @@ void test_env() {
 
     if (s != "fuckcpp") {
         printf("process: test-env: failed\n");
+        exit(1);
     }
 }
 
@@ -86,6 +89,19 @@ void test_r_file() {
 
     if (s != "fuckcpp") {
         printf("process: test-redirect-file: failed\n");
+        exit(1);
+    }
+}
+
+void test_exit_code() {
+    process p = process::exec("/bin/bash");
+
+    p.in() << "exit 120\n";
+    int code = p.wait_for();
+
+    if (code != 120) {
+        printf("process: test-exit-code: failed\n");
+        exit(1);
     }
 }
 
@@ -94,5 +110,6 @@ int main(int argc, const char **argv) {
     test_stderr();
     test_env();
     test_r_file();
+    test_exit_code();
     return 0;
 }
