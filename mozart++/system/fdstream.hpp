@@ -43,7 +43,7 @@ namespace mpp {
     private:
         fdoutbuf _buf;
     public:
-        explicit fdostream(int fd)
+        explicit fdostream(fd_type fd)
             : std::ostream(nullptr), _buf(fd) {
             rdbuf(&_buf);
         }
@@ -116,7 +116,7 @@ namespace mpp {
     private:
         fdinbuf _buf;
     public:
-        explicit fdistream(int fd)
+        explicit fdistream(fd_type fd)
             : std::istream(nullptr), _buf(fd) {
             rdbuf(&_buf);
         }

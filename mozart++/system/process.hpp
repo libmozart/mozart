@@ -45,7 +45,7 @@ namespace mpp_impl {
     struct process_startup {
         std::vector<std::string> _cmdline;
         std::unordered_map<std::string, std::string> _env;
-        std::string _cwd;
+        std::string _cwd = ".";
         redirect_info _stdin;
         redirect_info _stdout;
         redirect_info _stderr;
@@ -111,10 +111,14 @@ namespace mpp_impl {
         std::string command = ss.str();
 
         if (!CreateProcess(nullptr, const_cast<char *>(command.c_str()),
-                           nullptr, nullptr, true, 0, nullptr,
-			               startup._cwd.c_str(), &si, &pi)) {
+            nullptr, nullptr, true, CREATE_NO_WINDOW, nullptr,
+            startup._cwd.c_str(), &si, &pi)) {
             mpp::throw_ex<mpp::runtime_error>("unable to fork subprocess");
         }
+
+        CloseHandle(pstdin[PIPE_READ]);
+        CloseHandle(pstdout[PIPE_WRITE]);
+        CloseHandle(pstderr[PIPE_WRITE]);
 
         info._pid = pi.hProcess;
         info._tid = pi.hThread;
@@ -179,7 +183,7 @@ namespace mpp_impl {
             }
 
             // change cwd
-            if (!startup._cwd.empty() && chdir(startup._cwd.c_str()) != 0) {
+            if (chdir(startup._cwd.c_str()) != 0) {
                 mpp::throw_ex<mpp::runtime_error>("unable to change current working directory");
             }
 
@@ -310,7 +314,9 @@ namespace mpp_impl {
     int wait_for(const process_info &info) {
 #ifdef _WIN32
         WaitForSingleObject(info._pid, INFINITE);
-        return 0;
+        DWORD code = 0;
+        GetExitCodeProcess(info._pid, &code);
+        return code;
 #else
         int status;
         if (waitpid(info._pid, &status, 0) == info._pid) {
