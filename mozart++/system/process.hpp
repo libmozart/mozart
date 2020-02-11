@@ -412,7 +412,7 @@ namespace mpp_impl {
                 // there will be race conditions: our process exited and
                 // another process started with the same pid.
                 // to eliminate this case, we should check /proc/<pid>/cmdline
-                // but it's too complex.
+                // but it's too complex and not always correct.
                 return stat(path.c_str(), &buf) == -1 && errno == ENOENT;
 
             } else {
