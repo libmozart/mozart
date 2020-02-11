@@ -184,7 +184,7 @@ namespace mpp {
          * @param o default value
          * @return reference to the object or to the default object
          */
-        T &get_or(T &o) {
+        T &get_or(T &&o) {
             if (ptr() == nullptr) {
                 return o;
             }
@@ -200,7 +200,7 @@ namespace mpp {
          * @param o default value
          * @return reference to the object or to the default object
          */
-        const T &get_or(T &o) const {
+        const T &get_or(T &&o) const {
             if (ptr() == nullptr) {
                 return o;
             }
