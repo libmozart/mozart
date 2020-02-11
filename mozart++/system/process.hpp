@@ -7,22 +7,26 @@
  */
 #pragma once
 
+#include <algorithm>
 #include <vector>
 #include <string>
 #include <unordered_map>
 #include <memory>
 #include <sstream>
 
+#include <mozart++/core/base.hpp>
 #include <mozart++/exception>
 #include <mozart++/system/file.hpp>
 #include <mozart++/system/pipe.hpp>
 #include <mozart++/system/fdstream.hpp>
 
-#ifdef _WIN32
+#ifdef MOZART_PLATFORM_WIN32
 #include <Windows.h>
 #else
+
 #include <sys/wait.h>
 #include <csignal>
+
 #endif
 
 namespace mpp_impl {
@@ -64,7 +68,7 @@ namespace mpp_impl {
         fd_type _stderr = FD_INVALID;
     };
 
-#ifdef _WIN32
+#ifdef MOZART_PLATFORM_WIN32
     void create_process_win32(const process_startup &startup,
                               process_info &info,
                               fd_type *pstdin, fd_type *pstdout, fd_type *pstderr) {
@@ -133,9 +137,6 @@ namespace mpp_impl {
                              fd_type *pstdin, fd_type *pstdout, fd_type *pstderr) {
         pid_t pid = fork();
         if (pid < 0) {
-            close_pipe(pstdin);
-            close_pipe(pstdout);
-            close_pipe(pstderr);
             mpp::throw_ex<mpp::runtime_error>("unable to fork subprocess");
 
         } else if (pid == 0) {
@@ -171,15 +172,33 @@ namespace mpp_impl {
             close_fd(pstdout[PIPE_WRITE]);
             close_fd(pstderr[PIPE_WRITE]);
 
-            // copy command-line arguments
+            // command-line and environments
             size_t asize = startup._cmdline.size();
+            size_t esize = startup._env.size();
             char *argv[asize + 1];
+            char *envp[esize + 1];
 
-            // argv is always terminated with a nullptr
+            // argv and envp are always terminated with a nullptr
             argv[asize] = nullptr;
+            envp[esize] = nullptr;
 
+            // copy command-line arguments
             for (std::size_t i = 0; i < asize; ++i) {
-                argv[i] = strdup(startup._cmdline[i].c_str());
+                argv[i] = const_cast<char *>(startup._cmdline[i].c_str());
+            }
+
+            // copy environment variables
+            std::vector<std::string> envs;
+            std::stringstream buffer;
+            for (const auto &e : startup._env) {
+                buffer.str("");
+                buffer.clear();
+                buffer << e.first << "=" << e.second;
+                envs.emplace_back(buffer.str());
+            }
+
+            for (std::size_t i = 0; i < esize; ++i) {
+                envp[i] = const_cast<char *>(envs[i].c_str());
             }
 
             // change cwd
@@ -187,32 +206,8 @@ namespace mpp_impl {
                 mpp::throw_ex<mpp::runtime_error>("unable to change current working directory");
             }
 
-            // copy environment variables
-            size_t esize = startup._env.size();
-            char *envp[esize + 1];
-
-            // for safety, envp will be terminated with a nullptr
-            envp[esize] = nullptr;
-
-            std::stringstream buffer;
-            char **penv = envp;
-            for (const auto &e : startup._env) {
-                buffer.str("");
-                buffer.clear();
-                buffer << e.first << "=" << e.second;
-                *penv++ = strdup(buffer.str().c_str());
-            }
-
             // run subprocess
             ::execve(argv[0], argv, envp);
-
-            // throw if failed to execve()
-            for (std::size_t i = 0; i < asize; ++i) {
-                ::free(argv[i]);
-            }
-            for (std::size_t i = 0; i < esize; ++i) {
-                ::free(envp[i]);
-            }
             mpp::throw_ex<mpp::runtime_error>("unable to exec commands in subprocess");
 
         } else {
@@ -255,7 +250,7 @@ namespace mpp_impl {
     void create_process_impl(const process_startup &startup,
                              process_info &info,
                              fd_type *pstdin, fd_type *pstdout, fd_type *pstderr) {
-#ifdef _WIN32
+#ifdef MOZART_PLATFORM_WIN32
         create_process_win32(startup, info, pstdin, pstdout, pstderr);
 #else
         create_process_unix(startup, info, pstdin, pstdout, pstderr);
@@ -298,11 +293,27 @@ namespace mpp_impl {
             }
         }
 
-        create_process_impl(startup, info, pstdin, pstdout, pstderr);
+        try {
+            create_process_impl(startup, info, pstdin, pstdout, pstderr);
+        } catch (...) {
+            // do rollback work
+            // note: we should NOT close user provided redirect target fd,
+            // let users to close.
+            if (!startup._stdin.redirected()) {
+                close_pipe(pstdin);
+            }
+            if (!startup._stdout.redirected()) {
+                close_pipe(pstdout);
+            }
+            if (!startup._stderr.redirected()) {
+                close_pipe(pstderr);
+            }
+            throw;
+        }
     }
 
     void close_process(process_info &info) {
-#ifdef _WIN32
+#ifdef MOZART_PLATFORM_WIN32
         mpp_impl::close_fd(info._pid);
         mpp_impl::close_fd(info._tid);
 #endif
@@ -312,7 +323,7 @@ namespace mpp_impl {
     }
 
     int wait_for(const process_info &info) {
-#ifdef _WIN32
+#ifdef MOZART_PLATFORM_WIN32
         WaitForSingleObject(info._pid, INFINITE);
         DWORD code = 0;
         GetExitCodeProcess(info._pid, &code);
@@ -337,7 +348,7 @@ namespace mpp_impl {
     }
 
     void terminate_process(const process_info &info, bool force) {
-#ifdef _WIN32
+#ifdef MOZART_PLATFORM_WIN32
         TerminateProcess(info._pid, 0);
 #else
         kill(info._pid, force ? SIGKILL : SIGTERM);
@@ -456,7 +467,7 @@ namespace mpp {
             return *this;
         }
 
-        process_builder& environment(const std::string &key, const std::string &value) {
+        process_builder &environment(const std::string &key, const std::string &value) {
             _startup._env.emplace(key, value);
             return *this;
         }
@@ -498,7 +509,7 @@ namespace mpp {
     }
 
     process process::exec(const std::string &command,
-                 const std::vector<std::string> &args) {
+                          const std::vector<std::string> &args) {
         return process_builder().command(command).arguments(args).start();
     }
 }
