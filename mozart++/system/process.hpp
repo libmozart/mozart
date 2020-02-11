@@ -306,12 +306,33 @@ namespace mpp_impl {
         mpp_impl::close_fd(info._stderr);
     }
 
-    void wait_for(const process_info &info) {
+    int wait_for(const process_info &info) {
 #ifdef _WIN32
         WaitForSingleObject(info._pid, INFINITE);
+        return 0;
 #else
         int status;
-        waitpid(info._pid, &status, 0);
+        if (waitpid(info._pid, &status, 0) == info._pid) {
+            if (WIFEXITED(status)) {
+                return WEXITSTATUS(status);
+            }
+
+            if (WIFSIGNALED(status)) {
+                return WTERMSIG(status);
+            }
+
+            if (WIFSTOPPED(status)) {
+                return WSTOPSIG(status);
+            }
+        }
+        return 0;
+#endif
+    }
+
+    void terminate_process(const process_info &info, bool force) {
+#ifdef _WIN32
+#else
+        kill(info._pid, force ? SIGKILL : SIGTERM);
 #endif
     }
 }
@@ -327,6 +348,7 @@ namespace mpp {
 
     private:
         process_info _info;
+        int _exit_code = -1;
         std::unique_ptr<fdostream> _stdin;
         std::unique_ptr<fdistream> _stdout;
         std::unique_ptr<fdistream> _stderr;
@@ -366,8 +388,20 @@ namespace mpp {
             return *_stderr;
         }
 
-        void wait_for() const {
-            mpp_impl::wait_for(_info);
+        int wait_for() {
+            if (_exit_code >= 0) {
+                return _exit_code;
+            }
+            _exit_code = mpp_impl::wait_for(_info);
+            return _exit_code;
+        }
+
+        bool is_exited() const {
+            return _exit_code >= 0;
+        }
+
+        void interrupt(bool force = false) {
+            mpp_impl::terminate_process(_info, force);
         }
 
     public:
