@@ -126,10 +126,8 @@ private:
          */
         stor_impl(const stor_impl &) = delete;
 
-        // 自定义构造函数，构造存储的数据
         stor_impl(const T &dat) : data(dat) {}
 
-        // 以下五个函数为实现基类的 virtual 函数
         std::type_index type() const noexcept override {
             return typeid(T);
         }
