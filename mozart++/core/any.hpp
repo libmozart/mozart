@@ -156,37 +156,42 @@ private:
         }
         */
     };
+
     /*
-        实现小对象优化
-        减少内存分配瓶颈
+     * Small object optimization
     */
 
-    // 存储状态，分别为无数据、未触发优化、已触发优化
+    /**
+     * No data/optimization not triggered/optimization triggered
+     */
     enum class stor_status {
         null,
         ptr,
         data
     };
 
-    // 使用联合实现
     struct stor_union {
-        // 触发小对象优化的阈值，需大于 std::alignment_of<stor_base *>::value
+        // threshold of small object optimization, which must be greater than
+        // std::alignment_of<stor_base *>::value
         static constexpr unsigned int static_stor_size = 3 * std::alignment_of<stor_base *>::value;
+
         union {
-            // 使用无符号字符数组提供存储数据的原始内存空间
-            unsigned char data[static_stor_size];
-            // 超出大小阈值的数据即存储在堆上
+            // raw memory
+            unsigned char data[static_stor_size] = {0};
+            // or storing on heap
             stor_base *ptr;
         } impl;
-        // 存储状态
+
         stor_status status = stor_status::null;
     };
 
     stor_union m_data;
 
-    // 内部方法封装
 
-    // 获取 stor_base 指针方法的封装
+
+    /**
+     * @return Return inner pointer inside stor_base
+     */
     inline stor_base *get_handler() {
         switch (m_data.status) {
             case stor_status::null:
@@ -198,7 +203,6 @@ private:
         }
     }
 
-    // 常量重载
     inline const stor_base *get_handler() const {
         switch (m_data.status) {
             case stor_status::null:
@@ -210,7 +214,6 @@ private:
         }
     }
 
-    // 回收方法的封装
     inline void recycle() {
         if (m_data.status != stor_status::null) {
             get_handler()->suicide(m_data.status == stor_status::data);
@@ -218,7 +221,6 @@ private:
         }
     }
 
-    // 存储方法的封装
     template <typename T>
     inline void store(const T &val) {
         if (sizeof(stor_impl<T>) <= stor_union::static_stor_size) {
@@ -232,7 +234,6 @@ private:
         }
     }
 
-    // 复制方法的封装
     inline void copy(const any &data) {
         if (data.m_data.status != stor_status::null) {
             const stor_base *ptr = data.get_handler();
@@ -249,41 +250,33 @@ private:
     }
 
 public:
-    // 交换函数，这里直接调用标准实现
     inline void swap(any &val) noexcept {
         mpp::swap(m_data, val.m_data);
     }
 
-    // 右值引用重载
     inline void swap(any &&val) noexcept {
         mpp::swap(m_data, val.m_data);
     }
 
-    // 默认构造函数
-    any() {}
+    any() = default;
 
-    // 自定义构造函数，未标记为 explicit 以允许隐式转换
     template <typename T>
-    any(const T &val) {
+    /*implicit*/ any(const T &val) {
         store(val);
     }
 
-    // 复制构造函数
     any(const any &val) {
         copy(val);
     }
 
-    // 移动构造函数
     any(any &&val) noexcept {
         swap(val);
     }
 
-    // 析构函数
     ~any() {
         recycle();
     }
 
-    // 赋值函数，实际上为重载赋值运算符
     template <typename T>
     inline any &operator=(const T &val) {
         recycle();
@@ -291,20 +284,20 @@ public:
         return *this;
     }
 
-    // 自赋值重载
     inline any &operator=(const any &val) {
         if (&val != this)
             copy(val);
         return *this;
     }
 
-    // 右值引用重载
     inline any &operator=(any &&val) noexcept {
         swap(val);
         return *this;
     }
 
-    // 获取存储数据的类型，若为空则返回void
+    /**
+     * @return Data type inside any, void if this any holds nothing
+     */
     inline std::type_index data_type() const noexcept {
         if (m_data.status == stor_status::null)
             return typeid(void);
@@ -312,7 +305,6 @@ public:
             return get_handler()->type();
     }
 
-    // 提取数据方法封装
     template <typename T>
     inline T &get() {
         stor_base *ptr = get_handler();
@@ -321,7 +313,6 @@ public:
         return static_cast<stor_impl<T> *>(ptr)->data;
     }
 
-    // 常量重载
     template <typename T>
     inline const T &get() const {
         const stor_base *ptr = get_handler();
