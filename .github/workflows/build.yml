@@ -12,7 +12,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
-    - name: prepare-build
+    - name: build
       run: |
         mkdir build
         cd build
@@ -22,7 +22,7 @@ jobs:
     - name: run-tests
       run: |
         cd build
-        echo "NO TEST FOR FUCKING WINDOWS"
+        cmake --build . --target RUN_TESTS
       if: matrix.os == 'windows-latest'
 
     - name: run-tests
