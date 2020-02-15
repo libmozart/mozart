@@ -23,13 +23,13 @@ jobs:
       if: matrix.os == 'windows-latest'
       run: |
         cd build
-        cmake --build . --target RUN_TESTS
+        cmake --build . --config MinSizeRel --target RUN_TESTS
 
     - name: run-tests
       if: matrix.os != 'windows-latest'
       run: |
         cd build
-        cmake --build . --target test
+        cmake --build . --config MinSizeRel --target test
 
     - name: populate-artifact
       if: matrix.os == 'windows-latest'
@@ -66,3 +66,4 @@ jobs:
       with:
         name: mozart++-windows
         path: artifact
+
