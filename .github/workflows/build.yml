@@ -31,3 +31,20 @@ jobs:
         cmake --build . --target test
       if: matrix.os != 'windows-latest'
 
+    - uses: actions/upload-artifact@master
+      if: matrix.os == 'ubuntu-latest'
+      with:
+        name: mozart++-ubuntu
+        path: build
+
+    - uses: actions/upload-artifact@master
+      if: matrix.os == 'macOS-latest'
+      with:
+        name: mozart++-macos
+        path: build
+
+    - uses: actions/upload-artifact@master
+      if: matrix.os == 'windows-latest'
+      with:
+        name: mozart++-windows
+        path: build
