@@ -25,8 +25,6 @@
 #if __cplusplus < 201402L
 #error Please use newer cplusplus compiler fully supports C++14 standard
 #endif
-#else
-#warning Can not detect C++ standard version with MSVC Compiler automatically, please using C++14 or newer standard
 #endif
 
 /**

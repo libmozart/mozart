@@ -17,6 +17,7 @@
 #include <mozart++/exception>
 #include <mozart++/stream>
 #include <mozart++/function>
+#include <algorithm>
 #include <climits>
 
 namespace mpp {
@@ -459,9 +460,11 @@ namespace mpp {
 
             // Build the bad char heuristic table, with uint8_t to reduce cache thrashing.
             uint8_t skipped[256];
-            std::memset(skipped, N, 256);
+            // safe to convert from size_t to int
+            std::memset(skipped, static_cast<int>(N), 256);
             for (unsigned i = 0; i != N - 1; ++i) {
-                skipped[(uint8_t) str[i]] = N - 1 - i;
+                // safe to convert from size_t to uint8_t
+                skipped[(uint8_t) str[i]] = static_cast<int>(N - 1 - i);
             }
 
             do {
