@@ -27,7 +27,6 @@ Mozart++ 有两个 `namespace`, `mpp` 和 `mpp_impl`.
   * `mpp::any`: 效率极高的 `std::any`
   * `mpp::allocator_type`: 通用内存分配器具
 * C
-  * `mpp::curry()`: 将普通的 C++ 函数转变成「柯里化」的函数
   * `mpp::codecvt`: 宽字符串和普通字符串的互相转换器
 * E
   * `mpp::event_emitter`: 像 NodeJS 那样的并且无侵入性的 EventEmitter (两个实现):
