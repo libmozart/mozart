@@ -59,14 +59,16 @@ void test_stderr() {
 }
 
 void test_env() {
-    // I don't know how to use envs in powershell
-#ifndef MOZART_PLATFORM_WIN32
     process p = process_builder().command(SHELL)
         .environment("VAR1", "fuck")
         .environment("VAR2", "cpp")
         .start();
 
+#ifdef MOZART_PLATFORM_WIN32
+    p.in() << "echo $env:VAR1" << std::endl;
+#else
     p.in() << "echo $VAR1$VAR2" << std::endl;
+#endif
     p.in() << "exit" << std::endl;
     p.wait_for();
 
@@ -77,7 +79,6 @@ void test_env() {
         printf("process: test-env: failed\n");
         exit(1);
     }
-#endif
 }
 
 void test_r_file() {

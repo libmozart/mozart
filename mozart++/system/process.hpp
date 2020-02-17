@@ -113,12 +113,43 @@ namespace mpp_impl {
 
         std::string command = ss.str();
 
+        char *envs = nullptr;
+
+        if (!startup._env.empty()) {
+            // starting from 1, which is the block terminator '\0'
+            size_t env_size = 1;
+            for (const auto &e : startup._env) {
+                // need 2 more, which is the '=' and variable terminator '\0'
+                env_size += e.first.length() + e.second.length() + 2;
+            }
+
+            envs = new char[env_size]{0};
+            char *p = envs;
+
+            for (const auto &e : startup._env) {
+                strncat(p, e.first.c_str(), e.first.length());
+                p += e.first.length();
+                *p++ = '=';
+                strncat(p, e.second.c_str(), e.second.length());
+                p += e.second.length();
+                *p++ = '\0'; // variable terminator
+            }
+            *p++ = '\0'; // block terminator
+
+            if (p != envs + env_size) {
+                delete[] envs;
+                mpp::throw_ex<mpp::runtime_error>("unable to copy environment variables");
+            }
+        }
+
         if (!CreateProcess(nullptr, const_cast<char *>(command.c_str()),
-            nullptr, nullptr, true, CREATE_NO_WINDOW, nullptr,
+            nullptr, nullptr, true, CREATE_NO_WINDOW, envs,
             startup._cwd.c_str(), &si, &pi)) {
+            delete[] envs;
             mpp::throw_ex<mpp::runtime_error>("unable to fork subprocess");
         }
 
+        delete[] envs;
         CloseHandle(pstdin[PIPE_READ]);
         CloseHandle(pstdout[PIPE_WRITE]);
         CloseHandle(pstderr[PIPE_WRITE]);
