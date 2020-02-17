@@ -38,13 +38,15 @@ namespace mpp {
 #ifdef _MSC_VER
     // On MSVC, ssize_t is SSIZE_T
     using ssize_t = SSIZE_T;
+#else
+    using ssize_t = ::ssize_t;
 #endif
 
 #ifdef MOZART_PLATFORM_WIN32
     using fd_type = HANDLE;
     static constexpr fd_type FD_INVALID = nullptr;
 
-    ssize_t read(fd_type handle, void *buf, size_t count) {
+    mpp::ssize_t read(fd_type handle, void *buf, size_t count) {
         DWORD dwRead;
         if (ReadFile(handle, buf, count, &dwRead, nullptr)) {
             return dwRead;
@@ -53,7 +55,7 @@ namespace mpp {
         }
     }
 
-    ssize_t write(fd_type handle, const void *buf, size_t count) {
+    mpp::ssize_t write(fd_type handle, const void *buf, size_t count) {
         DWORD dwWritten;
         if (WriteFile(handle, buf, count, &dwWritten, nullptr)) {
             return dwWritten;
