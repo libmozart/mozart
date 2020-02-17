@@ -82,7 +82,7 @@ namespace mpp {
                 std::uint32_t head = 0;
                 bool read_next = true;
                 for (auto it = local.begin(); it != local.end();) {
-                    if (read_char) {
+                    if (read_next) {
                         head = *(it++);
                         if (head & u8_blck_begin)
                             read_next = false;
