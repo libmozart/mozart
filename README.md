@@ -6,13 +6,14 @@
 [![GitHub top language](https://img.shields.io/github/languages/top/covariant-institute/mozart.svg)](https://github.com/covariant-institute/mozart)
 [![license](https://img.shields.io/github/license/covariant-institute/mozart.svg?colorB=000000)](https://github.com/covariant-institute/mozart)
 
-<br/>
-<h1>Mozart++ Template Library made with ❤️</h1>
-</div>
+    <br/>
+    <h1>Mozart++ Template Library made with ❤️</h1>
+    <br/>
 
 [English](./README.md)
-
 [中文](./README-zh.md)
+
+</div>
 
 ## What is Mozart++
 Mozart++ is a cross-platform template library written in Modern C++ designed to make up for essential but missing components in STL.
