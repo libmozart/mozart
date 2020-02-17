@@ -10,6 +10,39 @@
 
 #include <type_traits>
 
+#define mpp_in_place_type_t(T)  mpp_impl::in_place_t(&)(mpp_impl::in_place_type_tag<T>)
+#define mpp_in_place_index_t(T)  mpp_impl::in_place_t(&)(mpp_impl::in_place_index_tag<I>)
+
+namespace mpp_impl {
+    template <typename T>
+    struct in_place_type_tag {};
+
+    template <std::size_t I>
+    struct in_place_index_tag {};
+
+    struct in_place_t {};
+
+    template <typename T>
+    inline in_place_t in_place(in_place_type_tag<T> = in_place_type_tag<T>()) {
+        return in_place_t{};
+    }
+
+    template <std::size_t I>
+    inline in_place_t in_place(in_place_index_tag<I> = in_place_index_tag<I>()) {
+        return in_place_t{};
+    }
+
+    template <typename T>
+    inline in_place_t in_place_type(in_place_type_tag<T> = in_place_type_tag<T>()) {
+        return in_place_t{};
+    }
+
+    template <std::size_t I>
+    inline in_place_t in_place_index(in_place_index_tag<I> = in_place_index_tag<I>()) {
+        return in_place_t{};
+    }
+}
+
 namespace mpp {
     template <typename ...>
     using void_t = void;
