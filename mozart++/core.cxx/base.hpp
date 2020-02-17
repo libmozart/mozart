@@ -1,5 +1,5 @@
 /**
- * Mozart++ Template Library
+ * Mozart++ Template Library: Core Library/Foundation Library
  * Licensed under MIT License
  * Copyright (c) 2020 Covariant Institute
  * Website: https://covariant.cn/
@@ -28,10 +28,10 @@
 #endif
 
 /**
- * Mozart++ Version: 19.12.1
+ * Mozart++ Version: 20.2.1
  */
 
-#define __Mozart 191201L
+#define __Mozart 200201L
 
 /**
  * Platform detection
@@ -131,20 +131,20 @@ namespace mpp {
     /**
      * Alignment
      */
-    template <typename type>
+    template<typename type>
     using aligned_type = std::aligned_storage_t<sizeof(type), std::alignment_of<type>::value>;
 
-    template <size_t len, typename ...types>
+    template<size_t len, typename ...types>
     using aligned_union = std::aligned_union_t<len, types...>;
 
     inline byte_t *uninitialized_copy(byte_t *dest, byte_t *src, size_t count) noexcept;
 
-    template <typename T, typename ...Args>
+    template<typename T, typename ...Args>
     inline static void construct_at(byte_t *ptr, Args &&...args) {
         ::new(ptr) T(forward<Args>(args)...);
     }
 
-    template <typename T>
+    template<typename T>
     inline static void destroy_at(byte_t *ptr) {
         reinterpret_cast<T *>(ptr)->~T();
     }

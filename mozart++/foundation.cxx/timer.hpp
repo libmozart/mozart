@@ -8,8 +8,7 @@
 
 #pragma once
 
-#include <mozart++/core/base.hpp>
-#include <mozart++/function>
+#include <mozart++/core>
 #include <chrono>
 #include <thread>
 

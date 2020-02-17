@@ -1,5 +1,5 @@
 /**
- * Mozart++ Template Library
+ * Mozart++ Template Library: System/IO
  * Licensed under MIT License
  * Copyright (c) 2020 Covariant Institute
  * Website: https://covariant.cn/
@@ -7,25 +7,39 @@
  */
 #pragma once
 
-#include <cstdio>
+#include <mozart++/core>
 #include <cstring>
 #include <cstdint>
-#include <mozart++/core/base.hpp>
+#include <cstdio>
 
 #ifdef MOZART_PLATFORM_WIN32
+
 #include <Windows.h>
 #include <io.h>
+
 #else
+
 #include <unistd.h>
+
 #endif
 
-// On MSVC, ssize_t is SSIZE_T
 #ifdef _MSC_VER
+
 #include <BaseTsd.h>
-using ssize_t = SSIZE_T;
+
 #endif
+
+namespace mpp_impl {
+    static constexpr int PIPE_READ = 0;
+    static constexpr int PIPE_WRITE = 1;
+}
 
 namespace mpp {
+#ifdef _MSC_VER
+    // On MSVC, ssize_t is SSIZE_T
+    using ssize_t = SSIZE_T;
+#endif
+
 #ifdef MOZART_PLATFORM_WIN32
     using fd_type = HANDLE;
     static constexpr fd_type FD_INVALID = nullptr;
@@ -65,5 +79,22 @@ namespace mpp {
         ::close(fd);
 #endif
         fd = FD_INVALID;
+    }
+
+    bool create_pipe(fd_type fds[2]) {
+#ifdef MOZART_PLATFORM_WIN32
+        SECURITY_ATTRIBUTES sa;
+        sa.nLength = sizeof(SECURITY_ATTRIBUTES);
+        sa.bInheritHandle = true;
+        sa.lpSecurityDescriptor = nullptr;
+        return CreatePipe(&fds[mpp_impl::PIPE_READ], &fds[mpp_impl::PIPE_WRITE], &sa, 0);
+#else
+        return ::pipe(fds) == 0;
+#endif
+    }
+
+    void close_pipe(fd_type fds[2]) {
+        close_fd(fds[mpp_impl::PIPE_READ]);
+        close_fd(fds[mpp_impl::PIPE_WRITE]);
     }
 }

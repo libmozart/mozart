@@ -7,10 +7,11 @@
  */
 #pragma once
 
+#include "io.hpp"
+
 #include <istream>
 #include <ostream>
 #include <streambuf>
-#include <mozart++/system/file.hpp>
 
 namespace mpp {
     class fdoutbuf : public std::streambuf {
@@ -19,7 +20,7 @@ namespace mpp {
 
     public:
         explicit fdoutbuf(mpp::fd_type fd)
-            : _fd(fd) {
+                : _fd(fd) {
         }
 
     protected:
@@ -45,14 +46,16 @@ namespace mpp {
         fdoutbuf _buf;
     public:
         explicit fdostream(fd_type fd)
-            : std::ostream(nullptr), _buf(fd) {
+                : std::ostream(nullptr), _buf(fd) {
             rdbuf(&_buf);
         }
 
 
 #ifdef MOZART_PLATFORM_WIN32
+
         explicit fdostream(int cfd)
-            : fdostream(reinterpret_cast<fd_type>(_get_osfhandle(cfd))) {}
+                : fdostream(reinterpret_cast<fd_type>(_get_osfhandle(cfd))) {}
+
 #endif
     };
 
@@ -75,10 +78,10 @@ namespace mpp {
 
     public:
         explicit fdinbuf(mpp::fd_type fd)
-            : _fd(fd) {
+                : _fd(fd) {
             setg(_buffer + PUTBACK_SIZE,     // beginning of putback area
-                _buffer + PUTBACK_SIZE,     // read position
-                _buffer + PUTBACK_SIZE);    // end position
+                 _buffer + PUTBACK_SIZE,     // read position
+                 _buffer + PUTBACK_SIZE);    // end position
         }
 
     protected:
@@ -98,8 +101,8 @@ namespace mpp {
             // copy up to PUTBACK_SIZE characters previously read into
             // the putback area
             std::memmove(_buffer + (PUTBACK_SIZE - backSize),
-                gptr() - backSize,
-                backSize);
+                         gptr() - backSize,
+                         backSize);
 
             // read at most BUFFER_SIZE new characters
             int num = mpp::read(_fd, _buffer + PUTBACK_SIZE, BUFFER_SIZE);
@@ -111,8 +114,8 @@ namespace mpp {
 
             // reset buffer pointers
             setg(_buffer + (PUTBACK_SIZE - backSize),
-                _buffer + PUTBACK_SIZE,
-                _buffer + PUTBACK_SIZE + num);
+                 _buffer + PUTBACK_SIZE,
+                 _buffer + PUTBACK_SIZE + num);
 
             // return next character
             return traits_type::to_int_type(*gptr());
@@ -124,13 +127,15 @@ namespace mpp {
         fdinbuf _buf;
     public:
         explicit fdistream(fd_type fd)
-            : std::istream(nullptr), _buf(fd) {
+                : std::istream(nullptr), _buf(fd) {
             rdbuf(&_buf);
         }
 
 #ifdef MOZART_PLATFORM_WIN32
+
         explicit fdistream(int cfd)
-            : fdistream(reinterpret_cast<fd_type>(_get_osfhandle(cfd))) {}
+                : fdistream(reinterpret_cast<fd_type>(_get_osfhandle(cfd))) {}
+
 #endif
     };
 }

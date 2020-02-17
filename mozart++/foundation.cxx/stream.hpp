@@ -8,8 +8,7 @@
 
 #pragma once
 
-#include <mozart++/function>
-
+#include <mozart++/core>
 #include <vector>
 #include <deque>
 #include <list>
@@ -20,10 +19,10 @@ namespace mpp {
      *
      * @tparam T Element type
      */
-    template <typename T>
+    template<typename T>
     class stream {
     public:
-        template <typename R>
+        template<typename R>
         using mapper_type = mpp::function<R(T x)>;
 
         using predicate_type = mapper_type<bool>;
@@ -237,7 +236,7 @@ namespace mpp {
             peek(consumer);
         }
 
-        template <typename U = T>
+        template<typename U = T>
         U reduce(U identity, const mpp::function<U(U, T)> &f) {
             U acc = identity;
             for_each([&](T t) {

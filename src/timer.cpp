@@ -6,6 +6,7 @@
  * Github:  https://github.com/covariant-institute/
  */
 
-#include "any.cpp"
-#include "core.cpp"
-#include "timer.cpp"
+#include <mozart++/timer>
+
+std::chrono::time_point<std::chrono::high_resolution_clock>
+mpp::timer::m_timer(std::chrono::high_resolution_clock::now());

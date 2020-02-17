@@ -8,7 +8,7 @@
 
 #include <cstdio>
 #include <cstdlib>
-#include <mozart++/system/process.hpp>
+#include <mozart++/process>
 
 #ifdef MOZART_PLATFORM_WIN32
 #define SHELL "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
@@ -91,11 +91,11 @@ void test_r_file() {
 
     process p = process_builder().command(SHELL)
 #ifndef MOZART_PLATFORM_WIN32
-        .environment("VAR", "fuckcpp")
+                    .environment("VAR", "fuckcpp")
 #endif
-        .redirect_stdout(fileno(fout))
-        .merge_outputs(true)
-        .start();
+            .redirect_stdout(fileno(fout))
+            .merge_outputs(true)
+            .start();
 
 
     p.in() << "echo $VAR" << std::endl;

@@ -7,7 +7,7 @@
  */
 
 #include <cstdio>
-#include <mozart++/system/fdstream.hpp>
+#include <mozart++/fdstream>
 
 int main() {
     FILE *fp = fopen("hello.txt", "w");

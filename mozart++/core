@@ -1,0 +1,15 @@
+// -*- C++ -*- forwarding header
+
+/**
+ * Mozart++ Template Library: Core Library
+ * Licensed under MIT License
+ * Copyright (c) 2020 Covariant Institute
+ * Website: https://covariant.cn/
+ * Github:  https://github.com/covariant-institute/
+ */
+
+#include "core.cxx/base.hpp"
+#include "core.cxx/exception.hpp"
+#include "core.cxx/type_traits.hpp"
+#include "core.cxx/function.hpp"
+#include "core.cxx/event_emitter.hpp"

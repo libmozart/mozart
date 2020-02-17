@@ -6,7 +6,7 @@
  * Github:  https://github.com/covariant-institute/
  */
 
-#include <mozart++/string/string.hpp>
+#include <mozart++/string>
 #include <iostream>
 
 using mpp::string_ref;

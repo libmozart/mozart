@@ -1,29 +1,22 @@
 //
 // Created by kiva on 2019/12/30.
 //
-#include <mozart++/event>
-#include <mozart++/core/timer.hpp>
-#include <mozart++/string/string.hpp>
+#include <mozart++/core>
+#include <mozart++/timer>
+#include <mozart++/string>
 #include <string>
-#include <cxxabi.h>
 
 std::string show(const char *name) {
-    char *ptr = abi::__cxa_demangle(name, nullptr, nullptr, nullptr);
-    if (ptr) {
-        auto s = std::string(ptr);
-        std::free(ptr);
-        return std::move(s);
-    }
-    return std::string("Oops");
+    return cxx_demangle(name);
 }
 
 static constexpr int TIMES = 1000000;
 
-template <typename EE>
+template<typename EE>
 class BenchmarkClass : public EE {
 };
 
-template <typename EE>
+template<typename EE>
 struct BenchmarkRunner {
     static void doit() {
         BenchmarkClass<EE> ee;

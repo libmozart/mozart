@@ -7,21 +7,19 @@
  */
 #pragma once
 
+#include <mozart++/core>
+#include <mozart++/fdstream>
+#include <unordered_map>
 #include <algorithm>
+#include <sstream>
 #include <vector>
 #include <string>
-#include <unordered_map>
 #include <memory>
-#include <sstream>
-
-#include <mozart++/core/base.hpp>
-#include <mozart++/exception>
-#include <mozart++/system/file.hpp>
-#include <mozart++/system/pipe.hpp>
-#include <mozart++/system/fdstream.hpp>
 
 #ifdef MOZART_PLATFORM_WIN32
+
 #include <Windows.h>
+
 #else
 #include <sys/stat.h>
 #include <sys/wait.h>
@@ -34,8 +32,6 @@ namespace mpp_impl {
     using mpp::close_fd;
     using mpp::close_pipe;
     using mpp::create_pipe;
-    using mpp::PIPE_WRITE;
-    using mpp::PIPE_READ;
 
     struct redirect_info {
         fd_type _target = FD_INVALID;
@@ -68,6 +64,7 @@ namespace mpp_impl {
     };
 
 #ifdef MOZART_PLATFORM_WIN32
+
     void create_process_win32(const process_startup &startup,
                               process_info &info,
                               fd_type *pstdin, fd_type *pstdout, fd_type *pstderr) {
@@ -144,8 +141,8 @@ namespace mpp_impl {
         }
 
         if (!CreateProcess(nullptr, const_cast<char *>(command.c_str()),
-            nullptr, nullptr, true, CREATE_NO_WINDOW, envs,
-            startup._cwd.c_str(), &si, &pi)) {
+                           nullptr, nullptr, true, CREATE_NO_WINDOW, envs,
+                           startup._cwd.c_str(), &si, &pi)) {
             delete[] envs;
             mpp::throw_ex<mpp::runtime_error>("unable to fork subprocess");
         }
@@ -161,6 +158,7 @@ namespace mpp_impl {
         info._stdout = pstdout[PIPE_READ];
         info._stderr = pstderr[PIPE_READ];
     }
+
 #else
 
     void create_process_unix(const process_startup &startup,
@@ -478,10 +476,10 @@ namespace mpp {
         std::unique_ptr<fdistream> _stderr;
 
         explicit process(const process_info &info)
-            : _info(info),
-              _stdin(std::make_unique<fdostream>(_info._stdin)),
-              _stdout(std::make_unique<fdistream>(_info._stdout)),
-              _stderr(std::make_unique<fdistream>(_info._stderr)) {
+                : _info(info),
+                  _stdin(std::make_unique<fdostream>(_info._stdin)),
+                  _stdout(std::make_unique<fdistream>(_info._stdout)),
+                  _stderr(std::make_unique<fdistream>(_info._stderr)) {
         }
 
     public:
@@ -562,7 +560,7 @@ namespace mpp {
             return *this;
         }
 
-        template <typename Container>
+        template<typename Container>
         process_builder &arguments(const Container &c) {
             if (_startup._cmdline.size() <= 1) {
                 std::copy(c.begin(), c.end(), std::back_inserter(_startup._cmdline));
@@ -593,6 +591,7 @@ namespace mpp {
         }
 
 #ifdef MOZART_PLATFORM_WIN32
+
         process_builder &redirect_stdin(int cfd) {
             return redirect_stdin(reinterpret_cast<fd_type>(_get_osfhandle(cfd)));
         }
@@ -604,6 +603,7 @@ namespace mpp {
         process_builder &redirect_stderr(int cfd) {
             return redirect_stderr(reinterpret_cast<fd_type>(_get_osfhandle(cfd)));
         }
+
 #endif
 
         process_builder &directory(const std::string &cwd) {

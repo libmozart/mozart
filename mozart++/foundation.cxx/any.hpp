@@ -8,9 +8,8 @@
 
 #pragma once
 
-#include <mozart++/core/base.hpp>
-#include <mozart++/core/exception.hpp>
-#include <mozart++/core/memory.hpp>
+#include <mozart++/core>
+#include <mozart++/memory>
 #include <typeindex>
 
 namespace mpp {
@@ -31,12 +30,12 @@ public:
      *
      * @tparam DataType
      */
-    template <typename T>
+    template<typename T>
     using default_allocator_provider = mpp::allocator<T>;
     /**
      * Unified definition
      */
-    template <typename T>
+    template<typename T>
     using default_allocator = allocator_type<T, default_allocate_buffer_size, default_allocator_provider>;
 
 private:
@@ -98,7 +97,7 @@ private:
      *
      * @tparam DataType
      */
-    template <typename T>
+    template<typename T>
     class stor_impl : public stor_base {
     public:
         /**
@@ -186,7 +185,6 @@ private:
     stor_union m_data;
 
 
-
     /**
      * @return Return inner pointer inside stor_base
      */
@@ -219,7 +217,7 @@ private:
         }
     }
 
-    template <typename T>
+    template<typename T>
     inline void store(const T &val) {
         if (sizeof(stor_impl<T>) <= stor_union::static_stor_size) {
             ::new(m_data.impl.data) stor_impl<T>(val);
@@ -258,7 +256,7 @@ public:
 
     any() = default;
 
-    template <typename T>
+    template<typename T>
     /*implicit*/ any(const T &val) {
         store(val);
     }
@@ -275,7 +273,7 @@ public:
         recycle();
     }
 
-    template <typename T>
+    template<typename T>
     inline any &operator=(const T &val) {
         recycle();
         store(val);
@@ -303,7 +301,7 @@ public:
             return get_handler()->type();
     }
 
-    template <typename T>
+    template<typename T>
     inline T &get() {
         stor_base *ptr = get_handler();
         if (ptr->type() != typeid(T))
@@ -311,7 +309,7 @@ public:
         return static_cast<stor_impl<T> *>(ptr)->data;
     }
 
-    template <typename T>
+    template<typename T>
     inline const T &get() const {
         const stor_base *ptr = get_handler();
         if (ptr->type() != typeid(T))

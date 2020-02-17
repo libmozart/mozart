@@ -40,10 +40,8 @@ aux_source_directory(./mozart++ SRCS)
 aux_source_directory(./src SRCS_IMPL)
 
 ## dummy target. DO NOT build this target directly or you will probably get an error.
-add_library(mozart++ STATIC
-        ${SRCS}
-        ${SRCS_IMPL}
-        )
+add_library(mozart++ STATIC ${SRCS_IMPL})
+
 set_target_properties(mozart++ PROPERTIES LINKER_LANGUAGE CXX)
 
 ## test and benchmark targets here
