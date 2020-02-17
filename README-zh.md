@@ -1,13 +1,17 @@
-# Mozart++ Template Library made with ❤️
+<div align="center">
 
+   <img width="500" src="https://covariant.cn/libmozart.png" alt="logo"></br>
+----
 [![Action Status](https://github.com/covariant-institute/mozart/workflows/build/badge.svg)](https://github.com/covariant-institute/mozart/actions)
 [![GitHub top language](https://img.shields.io/github/languages/top/covariant-institute/mozart.svg)](https://github.com/covariant-institute/mozart)
 [![license](https://img.shields.io/github/license/covariant-institute/mozart.svg?colorB=000000)](https://github.com/covariant-institute/mozart)
 
+   <h1>Mozart++ Template Library made with ❤️</h1>
 
 [English](./README.md)
-
 [中文](./README-zh.md)
+
+</div>
 
 ## Mozart++ 是什么？
 Mozart++ 是一个用现代 C++ 写成的模版库，用来补足 STL 的短板。
@@ -15,6 +19,15 @@ Mozart++ 是一个用现代 C++ 写成的模版库，用来补足 STL 的短板�
 Mozart++ 诞生于我们的日常开发中。通常我们需要在每个项目中造各种各样的“轮子”来满足需求，但造轮子的过程十分痛苦和繁琐，所以，我们决定把这些“轮子”单独抽出来做成一个公共的模版库。
 
 目前为止，我们的项目采用 C++14 语言标准，因为 Mozart++ 最初用来支持的项目就是用 C++14 写成的。
+
+## 支持的编译器
+编译器|版本|测试平台|状态
+:---:|:---:|:---:|:---:|
+gcc|8.1.0-x86_64|Ubuntu 18.04|:white_check_mark:
+gcc|7.4.0-x86_64|WSL Ubuntu 18.04|:white_check_mark:
+Apple Clang|11.0.0|macOS Catalina|:white_check_mark:
+mingw-gcc|8.1.0 (x86_64-posix-seh-rev0)|Windows 10 Pro 1903|:white_check_mark:
+msvc|19.24.28316|Windows 10 Pro 1903|:white_check_mark:
 
 ## 代码约定
 Mozart++ 有两个 `namespace`, `mpp` 和 `mpp_impl`.
@@ -35,11 +48,15 @@ Mozart++ 有两个 `namespace`, `mpp` 和 `mpp_impl`.
 * F
   * `mpp::function`: `std::function` 的别名
   * `mpp::function_parser`: 函数类型萃取器，支持所有 `callble` 类型
-  * `mpp::function_type`: 对使用函数类型萃取器得到的函数类型的别名 (即 `mpp::function`).
+  * `mpp::function_type`: 对使用函数类型萃取器得到的函数类型的别名 (即 `mpp::function`)
+  * `mpp::fdistream`: 将 C 的文件描述符和 Windows 的文件句柄包装成 std::istream
+  * `mpp::fdostream`: 将 C 的文件描述符和 Windows 的文件句柄包装成 std::ostream
 * I
   * `mpp::iterator_range`: 将 `iterator` 包装成支持 `ranged-for` 的对象
 * O
   * `mpp::optional`: 像 C++17 中的 `std::optional`
+* P
+  * `mpp::process`: 跨平台进程交互库拓展库
 * R
   * `mpp::runtime_error`: 运行时异常
 * S
@@ -49,6 +66,31 @@ Mozart++ 有两个 `namespace`, `mpp` 和 `mpp_impl`.
   * `mpp::timer`: 包装与时间操作相关的 API
   * `mpp::typelist`: 编译期的类型列表，其元素均为类型变量
   * `mpp::throw_ex()`: 异常抛出，但会触发全局的一个 event emitter.
+
+## 如何使用 Mozart++?
+#### 基于 CMake 的项目
+首先，打开你的终端（或者 cmd，或者 powershell）
+```bash
+$ cd /path/to/your/project
+$ git submodule init
+$ git submodule add https://github.com/libmozart/mozart.git third-party/mozart
+```
+
+然后，添加下面这行到项目根目录下的 `CMakeLists.txt` 中:
+```cmake
+add_subdirectory(third-party/mozart)
+include_directories(third-party/mozart)
+```
+
+重要提示: 不要忘记将 `mozart++` 连接到你的目标上.
+请保证 `CMakeLists.txt` 中含有下面这行代码：
+```cmake
+target_link_libraries(<your-target> mozart++)
+```
+
+#### 基于其他构建工具的项目
+目前我们正在让 Mozart++ 支持其他构建工具，如果您有任何建议，
+欢迎来提交 issue 或者 pull request
 
 ## 示例代码
 * Event Emitter
@@ -90,6 +132,21 @@ Mozart++ 有两个 `namespace`, `mpp` 和 `mpp_impl`.
             }
             return s;
         });
+    }
+    ```
+
+* Process
+    ```cpp
+    using mpp::process;
+
+    process p = process::exec("/bin/bash");
+    p.in() << "ls /" << std::endl;
+    p.in() << "exit" << std::endl;
+    p.wait_for();
+
+    std::string s;
+    while (std::getline(p.out(), s)) {
+        printf("%s\n", s.c_str());
     }
     ```
 
