@@ -39,7 +39,7 @@ void test_stderr() {
 #ifndef MOZART_PLATFORM_WIN32
     // the following code is equivalent to "/bin/bash 2>&1"
     process p = process_builder().command(SHELL)
-        .redirect_error(true)
+        .merge_outputs(true)
         .start();
 
     // write to stderr
