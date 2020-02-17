@@ -48,6 +48,12 @@ namespace mpp {
             : std::ostream(nullptr), _buf(fd) {
             rdbuf(&_buf);
         }
+
+
+#ifdef MOZART_PLATFORM_WIN32
+        explicit fdostream(int cfd)
+            : fdostream(reinterpret_cast<fd_type>(_get_osfhandle(cfd))) {}
+#endif
     };
 
     class fdinbuf : public std::streambuf {
@@ -121,6 +127,11 @@ namespace mpp {
             : std::istream(nullptr), _buf(fd) {
             rdbuf(&_buf);
         }
+
+#ifdef MOZART_PLATFORM_WIN32
+        explicit fdistream(int cfd)
+            : fdistream(reinterpret_cast<fd_type>(_get_osfhandle(cfd))) {}
+#endif
     };
 }
 

@@ -14,6 +14,7 @@
 
 #ifdef MOZART_PLATFORM_WIN32
 #include <Windows.h>
+#include <io.h>
 #else
 #include <unistd.h>
 #endif
