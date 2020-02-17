@@ -43,6 +43,8 @@ namespace mpp {
 
         class utf8 final : public charset {
             std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cvt;
+
+            static constexpr std::uint32_t ascii_max = 0x7F;
         public:
             std::u32string local2wide(const std::string &str) override {
                 return cvt.from_bytes(str);
@@ -53,7 +55,13 @@ namespace mpp {
             }
 
             bool is_identifier(char32_t ch) override {
-                if (ch >= 128)
+                /**
+                 * Chinese Character in Unicode Charset
+                 * Basic:    0x4E00 - 0x9FA5
+                 * Extended: 0x9FA6 - 0x9FEF
+                 * Special:  0x3007
+                 */
+                if (ch > ascii_max)
                     return (ch >= 0x4E00 && ch <= 0x9FA5) || (ch >= 0x9FA6 && ch <= 0x9FEF) || ch == 0x3007;
                 else
                     return ch == '_' || std::iswalnum(ch);
@@ -65,22 +73,25 @@ namespace mpp {
                 return ch & 0x0000ffff;
             }
 
+            static constexpr std::uint8_t u8_blck_begin = 0x80;
+            static constexpr std::uint32_t u32_blck_begin = 0x8000;
+
         public:
             std::u32string local2wide(const std::string &local) override {
                 std::u32string wide;
-                uint32_t head = 0;
+                std::uint32_t head = 0;
                 int status = 0;
                 for (auto it = local.begin(); it != local.end();) {
                     switch (status) {
                         case 0:
                             head = *(it++);
-                            if (head & 0x80)
+                            if (head & u8_blck_begin)
                                 status = 1;
                             else
                                 wide.push_back(set_zero(head));
                             break;
                         case 1: {
-                            uint8_t tail = *(it++);
+                            std::uint8_t tail = *(it++);
                             wide.push_back(set_zero(head << 8 | tail));
                             status = 0;
                             break;
@@ -88,14 +99,14 @@ namespace mpp {
                     }
                 }
                 if (status == 1)
-                    throw_ex<runtime_error>("Codecvt: Bad encoding.");
+                    throw_ex<mpp::runtime_error>("Codecvt: Bad encoding.");
                 return std::move(wide);
             }
 
             std::string wide2local(const std::u32string &wide) override {
                 std::string local;
                 for (auto &ch:wide) {
-                    if (ch & 0x8000)
+                    if (ch & u32_blck_begin)
                         local.push_back(ch >> 8);
                     local.push_back(ch);
                 }
@@ -103,8 +114,16 @@ namespace mpp {
             }
 
             bool is_identifier(char32_t ch) override {
-                if (ch & 0x8000)
-                    return (ch >= 0xB0A1 && ch <= 0xF7FE) || (ch >= 0x8140 && ch <= 0xA0FE) || ch == 0xA996;
+                /**
+                 * Chinese Character in GBK Charset
+                 * GBK/2: 0xB0A1 - 0xF7FE
+                 * GBK/3: 0x8140 - 0xA0FE
+                 * GBK/4: 0xAA40 - 0xFEA0
+                 * GBK/5: 0xA996
+                 */
+                if (ch & u32_blck_begin)
+                    return (ch >= 0xB0A1 && ch <= 0xF7FE) || (ch >= 0x8140 && ch <= 0xA0FE) ||
+                           (ch >= 0xAA40 && ch <= 0xFEA0) || ch == 0xA996;
                 else
                     return ch == '_' || std::iswalnum(ch);
             }
