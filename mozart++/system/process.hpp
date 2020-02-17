@@ -52,7 +52,7 @@ namespace mpp_impl {
         redirect_info _stdin;
         redirect_info _stdout;
         redirect_info _stderr;
-        bool _redirect_error = false;
+        bool merge_outputs = false;
     };
 
     struct process_info {
@@ -96,7 +96,7 @@ namespace mpp_impl {
          *      1. redirect stderr to stdout
          *      2. redirect stderr to a file
          */
-        if (startup._redirect_error) {
+        if (startup.merge_outputs) {
             // redirect stderr to stdout
             si.hStdError = pstdout[PIPE_WRITE];
         } else {
@@ -187,7 +187,7 @@ namespace mpp_impl {
              *      1. redirect stderr to stdout
              *      2. redirect stderr to a file
              */
-            if (startup._redirect_error) {
+            if (startup.merge_outputs) {
                 // redirect stderr to stdout
                 dup2(pstdout[PIPE_WRITE], STDERR_FILENO);
             } else {
@@ -255,7 +255,7 @@ namespace mpp_impl {
              *      1. redirect stderr to stdout
              *      2. redirect stderr to a file
              */
-            if (startup._redirect_error) {
+            if (startup.merge_outputs) {
                 // redirect stderr to stdout
                 // do nothing
             } else {
@@ -313,7 +313,7 @@ namespace mpp_impl {
             mpp::throw_ex<mpp::runtime_error>("unable to bind stdout");
         }
 
-        if (!startup._redirect_error) {
+        if (!startup.merge_outputs) {
             // if the user doesn't redirect stderr to stdout,
             // we bind stderr to a new file descriptor
             if (!redirect_or_pipe(startup._stderr, pstderr)) {
@@ -610,8 +610,8 @@ namespace mpp {
             return *this;
         }
 
-        process_builder &redirect_error(bool r) {
-            _startup._redirect_error = r;
+        process_builder &merge_outputs(bool r) {
+            _startup.merge_outputs = r;
             return *this;
         }
 

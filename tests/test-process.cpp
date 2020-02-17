@@ -92,7 +92,7 @@ void test_r_file() {
 #endif
         .environment("VAR", "fuckcpp")
         .redirect_stdout(fileno(fout))
-        .redirect_error(true)
+        .merge_outputs(true)
         .start();
 
 #ifdef MOZART_PLATFORM_WIN32
