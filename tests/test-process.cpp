@@ -59,6 +59,10 @@ void test_stderr() {
 }
 
 void test_env() {
+    // Thanks to the fucking powershit,
+    // I can't refer to my variables till now.
+    // God knows why MS designed an object-oriented shell,
+    // and it just tastes like shit.
 #ifndef MOZART_PLATFORM_WIN32
     process p = process_builder().command(SHELL)
         .environment("VAR1", "fuck")
