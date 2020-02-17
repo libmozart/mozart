@@ -371,8 +371,9 @@ namespace mpp_impl {
 
     bool process_exited(const process_info &info) {
 #ifdef MOZART_PLATFORM_WIN32
-        // TODO
-        return true;
+        DWORD code = 0;
+        GetExitCodeProcess(info._pid, &code);
+        return code != STILL_ACTIVE;
 #else
         // if WNOHANG was specified and one or more child(ren)
         // specified by pid exist, but have not yet changed state,
@@ -412,7 +413,7 @@ namespace mpp_impl {
                 // there will be race conditions: our process exited and
                 // another process started with the same pid.
                 // to eliminate this case, we should check /proc/<pid>/cmdline
-                // but it's too complex and not always correct.
+                // but it's too complex and not always reliable.
                 return stat(path.c_str(), &buf) == -1 && errno == ENOENT;
 
             } else {
