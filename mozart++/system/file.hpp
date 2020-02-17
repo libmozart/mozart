@@ -9,6 +9,7 @@
 
 #include <cstdio>
 #include <cstring>
+#include <mozart++/core/base.hpp>
 
 #ifdef MOZART_PLATFORM_WIN32
 #include <Windows.h>
