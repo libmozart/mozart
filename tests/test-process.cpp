@@ -87,7 +87,6 @@ void test_r_file() {
 
     process p = process_builder().command(SHELL)
 #ifndef MOZART_PLATFORM_WIN32
-        .arguments(std::vector<std::string>{"-NonInteractive"})
         .environment("VAR", "fuckcpp")
 #endif
         .redirect_stdout(fileno(fout))
