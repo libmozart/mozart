@@ -131,6 +131,21 @@ target_link_libraries(<your-target> mozart++)
     }
     ```
 
+* Process
+    ```cpp
+    using mpp::process;
+
+    process p = process::exec("/bin/bash");
+    p.in() << "ls /" << std::endl;
+    p.in() << "exit" << std::endl;
+    p.wait_for();
+
+    std::string s;
+    while (std::getline(p.out(), s)) {
+        printf("%s\n", s.c_str());
+    }
+    ```
+
 ## 贡献
 任何贡献都欢迎通过 issue 和 PR 提交！
 

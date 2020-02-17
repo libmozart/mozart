@@ -131,6 +131,21 @@ feel free to create issues or pull requests.
     }
     ```
 
+* Process
+    ```cpp
+    using mpp::process;
+
+    process p = process::exec("/bin/bash");
+    p.in() << "ls /" << std::endl;
+    p.in() << "exit" << std::endl;
+    p.wait_for();
+
+    std::string s;
+    while (std::getline(p.out(), s)) {
+        printf("%s\n", s.c_str());
+    }
+    ```
+
 ## Contributions
 Contributions and ideas are welcomed through issues and PRs.
 
