@@ -10,7 +10,7 @@
 #include <cstdlib>
 #include <mozart++/system/process.hpp>
 
-#ifdef _WIN32
+#ifdef MOZART_PLATFORM_WIN32
 #define SHELL "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
 #else
 #define SHELL "/bin/bash"
@@ -36,7 +36,7 @@ void test_stderr() {
     // + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
     // + FullyQualifiedErrorId : RedirectionNotSupported
 
-#ifndef _WIN32
+#ifndef MOZART_PLATFORM_WIN32
     // the following code is equivalent to "/bin/bash 2>&1"
     process p = process_builder().command(SHELL)
         .redirect_error(true)
@@ -60,7 +60,7 @@ void test_stderr() {
 
 void test_env() {
     // I don't know how to use envs in powershell
-#ifndef _WIN32
+#ifndef MOZART_PLATFORM_WIN32
     process p = process_builder().command(SHELL)
         .environment("VAR1", "fuck")
         .environment("VAR2", "cpp")
@@ -81,18 +81,24 @@ void test_env() {
 }
 
 void test_r_file() {
-#ifndef _WIN32
     // VAR=fuckcpp bash <<< "echo $VAR; exit" > output-all.txt
 
     FILE *fout = fopen("output-all.txt", "w");
 
     process p = process_builder().command(SHELL)
+#ifdef MOZART_PLATFORM_WIN32
+        .arguments(std::vector<std::string>{"-NonInteractive"})
+#endif
         .environment("VAR", "fuckcpp")
         .redirect_stdout(fileno(fout))
         .redirect_error(true)
         .start();
 
+#ifdef MOZART_PLATFORM_WIN32
+    p.in() << "echo $env:VAR" << std::endl;
+#else
     p.in() << "echo $VAR" << std::endl;
+#endif
     p.in() << "exit" << std::endl;
     p.wait_for();
 
@@ -107,7 +113,6 @@ void test_r_file() {
         printf("process: test-redirect-file: failed\n");
         exit(1);
     }
-#endif
 }
 
 void test_exit_code() {

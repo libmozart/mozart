@@ -559,6 +559,20 @@ namespace mpp {
             return *this;
         }
 
+#ifdef MOZART_PLATFORM_WIN32
+        process_builder &redirect_stdin(int cfd) {
+            return redirect_stdin(reinterpret_cast<fd_type>(_get_osfhandle(cfd)));
+        }
+
+        process_builder &redirect_stdout(int cfd) {
+            return redirect_stdout(reinterpret_cast<fd_type>(_get_osfhandle(cfd)));
+        }
+
+        process_builder &redirect_stderr(int cfd) {
+            return redirect_stderr(reinterpret_cast<fd_type>(_get_osfhandle(cfd)));
+        }
+#endif
+
         process_builder &directory(const std::string &cwd) {
             _startup._cwd = cwd;
             return *this;
