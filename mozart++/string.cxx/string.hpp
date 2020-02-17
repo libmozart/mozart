@@ -109,7 +109,7 @@ namespace mpp {
          * @tparam T
          * @return
          */
-        template<typename T>
+        template <typename T>
         std::enable_if_t<std::is_same<T, std::string>::value, string_ref> &
         operator=(T &&) = delete;
 
@@ -199,7 +199,7 @@ namespace mpp {
          * @param allocator allocator
          * @return copied string_ref(with data)
          */
-        template<typename Allocator>
+        template <typename Allocator>
         string_ref copy(Allocator &allocator) const {
             if (empty()) {
                 return string_ref{};

@@ -560,7 +560,7 @@ namespace mpp {
             return *this;
         }
 
-        template<typename Container>
+        template <typename Container>
         process_builder &arguments(const Container &c) {
             if (_startup._cmdline.size() <= 1) {
                 std::copy(c.begin(), c.end(), std::back_inserter(_startup._cmdline));

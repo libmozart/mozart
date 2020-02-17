@@ -42,6 +42,6 @@ namespace mpp {
         }
     };
 
-    template<typename, typename... ArgsT>
+    template <typename, typename... ArgsT>
     void throw_ex(ArgsT &&...);
 }

@@ -8,5 +8,5 @@
 
 #include <mozart++/any>
 
-template<typename T>
+template <typename T>
 mpp::any::default_allocator<mpp::any::stor_impl<T>> mpp::any::stor_impl<T>::allocator;

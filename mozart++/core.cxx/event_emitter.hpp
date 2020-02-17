@@ -36,7 +36,7 @@ namespace mpp_impl {
                 std::shared_ptr<char> _handler;
 
             public:
-                template<typename Handler>
+                template <typename Handler>
                 explicit handler_container(Handler &&handler)
                         :_args_info(typeid(void)) {
                     // handler-dependent types
@@ -65,7 +65,7 @@ namespace mpp_impl {
                     );
                 }
 
-                template<typename F>
+                template <typename F>
                 function_alias<F> *callable_ptr() {
                     using callee_arg_types = typename function_parser<function_alias<F>>::decayed_arg_types;
 
@@ -109,7 +109,7 @@ namespace mpp_impl {
              * @param name Event name
              * @param handler Event handler
              */
-            template<typename Handler>
+            template <typename Handler>
             void on(const std::string &name, Handler handler) {
                 _events[name].push_back(handler_container(handler));
             }
@@ -130,7 +130,7 @@ namespace mpp_impl {
              * @param name Event name
              * @param args Event handler arguments
              */
-            template<typename ...Args>
+            template <typename ...Args>
             void emit(const std::string &name, Args &&...args) {
                 auto it = _events.find(name);
                 if (it == _events.end()) {
@@ -155,15 +155,15 @@ namespace mpp_impl {
          * Convert template type packages into std::vector<std::type_index>
          * i.e. convert_typeinfo<ArgsT...>::convert(info_arr);
          */
-        template<typename...>
+        template <typename...>
         struct convert_typeinfo;
 
-        template<>
+        template <>
         struct convert_typeinfo<> {
             static void convert(std::vector<std::type_index> &) {}
         };
 
-        template<typename T, typename... ArgsT>
+        template <typename T, typename... ArgsT>
         struct convert_typeinfo<T, ArgsT...> {
             static void convert(std::vector<std::type_index> &arr) {
                 arr.emplace_back(typeid(T));
@@ -176,15 +176,15 @@ namespace mpp_impl {
          * i.e. check_typeinfo<0, ArgsT...>::check(info_arr);
          * @throw mpp::runtime_error
          */
-        template<unsigned int idx, typename... ArgsT>
+        template <unsigned int idx, typename... ArgsT>
         struct check_typeinfo;
 
-        template<unsigned int idx>
+        template <unsigned int idx>
         struct check_typeinfo<idx> {
             static void check(const std::vector<std::type_index> &) {}
         };
 
-        template<unsigned int idx, typename T, typename... ArgsT>
+        template <unsigned int idx, typename T, typename... ArgsT>
         struct check_typeinfo<idx, T, ArgsT...> {
             static void check(const std::vector<std::type_index> &arr) {
                 if (arr[idx] != typeid(T))
@@ -202,7 +202,7 @@ namespace mpp_impl {
          * @param data pointed to raw data
          * @return reference of instanced data
          */
-        template<unsigned int N, typename T>
+        template <unsigned int N, typename T>
         typename std::remove_reference<T>::type &get_argument(void **data) {
             return *reinterpret_cast<typename std::remove_reference<T>::type *>(data[N]);
         }
@@ -214,7 +214,7 @@ namespace mpp_impl {
          */
         inline void expand_argument(void **) {}
 
-        template<typename T, typename... ArgsT>
+        template <typename T, typename... ArgsT>
         void expand_argument(void **data, T &&val, ArgsT &&... args) {
             *data = reinterpret_cast<void *>(&val);
             expand_argument(data + 1, mpp::forward<ArgsT>(args)...);
@@ -233,11 +233,11 @@ namespace mpp_impl {
                 virtual void call_on(void **) const noexcept = 0;
             };
 
-            template<typename R, typename ...ArgsT>
+            template <typename R, typename ...ArgsT>
             class event_impl : public event_base {
                 mpp::function<R(ArgsT...)> m_func;
 
-                template<unsigned int... Seq>
+                template <unsigned int... Seq>
                 inline void call_impl(void **data, const sequence<Seq...> &) const noexcept {
                     m_func(get_argument<Seq, ArgsT>(data)...);
                 }
@@ -254,7 +254,7 @@ namespace mpp_impl {
 
             std::unordered_map<std::string, std::vector<std::shared_ptr<event_base>>> m_events;
 
-            template<typename R, typename... ArgsT>
+            template <typename R, typename... ArgsT>
             void on_impl(const std::string &name,
                          const mpp::function<R(ArgsT...)> &func) {
                 m_events[name].emplace_back(new event_impl<R, ArgsT...>(func));
@@ -273,7 +273,7 @@ namespace mpp_impl {
              * @param name event name
              * @param handler event handler
              */
-            template<typename T>
+            template <typename T>
             void on(const std::string &name, T &&listener) {
                 // Check through type traits
                 // Listener must be a function
@@ -287,7 +287,7 @@ namespace mpp_impl {
              * @param name event name
              * @param args event handler arguments
              */
-            template<typename... ArgsT>
+            template <typename... ArgsT>
             void emit(const std::string &name, ArgsT &&... args) {
                 if (m_events.count(name) > 0) {
                     auto &event = m_events.at(name);
@@ -338,7 +338,7 @@ namespace mpp {
         extern event_emitter core_event;
     }
 
-    template<typename T, typename... ArgsT>
+    template <typename T, typename... ArgsT>
     void throw_ex(ArgsT &&... args) {
         static_assert(std::is_base_of<std::exception, T>::value,
                       "Only std::exception and its derived classes can be thrown");

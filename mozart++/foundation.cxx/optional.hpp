@@ -18,7 +18,7 @@ namespace mpp {
     };
     static constexpr optional_none_t none{};
 
-    template<typename T>
+    template <typename T>
     class optional {
     private:
         /**
@@ -43,11 +43,11 @@ namespace mpp {
             _memory[0] = static_cast<unsigned char>(true);
         }
 
-        template<typename... Args>
+        template <typename... Args>
         constexpr explicit optional(mpp_in_place_type_t(T), Args &&... args)
                 : optional(T{std::forward<Args>(args)...}) {}
 
-        template<typename U, typename... Args>
+        template <typename U, typename... Args>
         constexpr explicit optional(mpp_in_place_type_t(T), std::initializer_list<U> il, Args &&... args)
                 : optional(T{il, std::forward<Args>(args)...}) {}
 
@@ -157,7 +157,7 @@ namespace mpp {
          * @param o default value
          * @return reference to the object or to the default object
          */
-        template<typename U>
+        template <typename U>
         std::enable_if_t<std::is_same<T, U>::value, T> &get_or(U &&o) {
             if (ptr() == nullptr) {
                 return o;
@@ -174,7 +174,7 @@ namespace mpp {
          * @param o default value
          * @return reference to the object or to the default object
          */
-        template<typename U>
+        template <typename U>
         const std::enable_if_t<std::is_same<T, U>::value, T> &get_or(U &&o) const {
             if (ptr() == nullptr) {
                 return o;
@@ -219,7 +219,7 @@ namespace mpp {
          * @param r default value
          * @param consumer The object receiver
          */
-        template<typename R>
+        template <typename R>
         R apply_or(const R &r, const std::function<R(T &)> &consumer) {
             if (ptr() != nullptr) {
                 return consumer(get());
@@ -236,7 +236,7 @@ namespace mpp {
          * @param r default value
          * @param consumer The object receiver
          */
-        template<typename R>
+        template <typename R>
         R apply_or(const R &r, const std::function<R(const T &)> &consumer) const {
             if (ptr() != nullptr) {
                 return consumer(get());
@@ -258,17 +258,17 @@ namespace mpp {
         }
     };
 
-    template<typename T>
+    template <typename T>
     constexpr optional<typename std::decay<T>::type> some(T &&v) {
         return optional<typename std::decay<T>::type>(std::forward<T>(v));
     }
 
-    template<typename T, typename... Args>
+    template <typename T, typename... Args>
     constexpr optional<T> some(Args &&... args) {
         return optional<T>(mpp_impl::in_place, std::forward<Args>(args)...);
     }
 
-    template<typename T, typename U, typename... Args>
+    template <typename T, typename U, typename... Args>
     constexpr optional<T> some(std::initializer_list<U> il, Args &&... args) {
         return optional<T>(mpp_impl::in_place, il, std::forward<Args>(args)...);
     }
