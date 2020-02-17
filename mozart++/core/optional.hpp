@@ -250,7 +250,7 @@ namespace mpp {
             return static_cast<bool>(_memory[0]);
         }
 
-        operator bool() {
+        /*implicit*/ operator bool() {
             return has_value();
         }
     };
