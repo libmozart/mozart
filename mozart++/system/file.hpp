@@ -9,12 +9,19 @@
 
 #include <cstdio>
 #include <cstring>
+#include <cstdint>
 #include <mozart++/core/base.hpp>
 
 #ifdef MOZART_PLATFORM_WIN32
 #include <Windows.h>
 #else
 #include <unistd.h>
+#endif
+
+// On MSVC, ssize_t is SSIZE_T
+#ifdef _MSC_VER
+#include <BaseTsd.h>
+using ssize_t = SSIZE_T;
 #endif
 
 namespace mpp {

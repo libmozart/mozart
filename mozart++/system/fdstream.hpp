@@ -35,7 +35,8 @@ namespace mpp {
 
         std::streamsize xsputn(const char *s,
                                std::streamsize num) override {
-            return mpp::write(_fd, s, num);
+            // safe to cast
+            return static_cast<std::streamsize>(mpp::write(_fd, s, num));
         }
     };
 
