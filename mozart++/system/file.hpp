@@ -10,14 +10,14 @@
 #include <cstdio>
 #include <cstring>
 
-#ifdef _WIN32
+#ifdef MOZART_PLATFORM_WIN32
 #include <Windows.h>
 #else
 #include <unistd.h>
 #endif
 
 namespace mpp {
-#ifdef _WIN32
+#ifdef MOZART_PLATFORM_WIN32
     using fd_type = HANDLE;
     static constexpr fd_type FD_INVALID = nullptr;
 
@@ -50,7 +50,7 @@ namespace mpp {
         if (fd == FD_INVALID) {
             return;
         }
-#ifdef _WIN32
+#ifdef MOZART_PLATFORM_WIN32
         CloseHandle(fd);
 #else
         ::close(fd);

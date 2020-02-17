@@ -9,7 +9,7 @@
 
 #include <mozart++/system/file.hpp>
 
-#ifdef _WIN32
+#ifdef MOZART_PLATFORM_WIN32
 #include <Windows.h>
 #endif
 
@@ -23,7 +23,7 @@ namespace mpp {
     }
 
     bool create_pipe(fd_type fds[2]) {
-#ifdef _WIN32
+#ifdef MOZART_PLATFORM_WIN32
         SECURITY_ATTRIBUTES sa;
         sa.nLength = sizeof(SECURITY_ATTRIBUTES);
         sa.bInheritHandle = true;
