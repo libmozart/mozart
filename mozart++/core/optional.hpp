@@ -11,8 +11,12 @@
 #include <array>
 #include <utility>
 #include <functional>
+#include <mozart++/core/type_traits.hpp>
 
 namespace mpp {
+    struct optional_none_t {};
+    static constexpr optional_none_t none{};
+
     template <typename T>
     class optional {
     private:
@@ -24,59 +28,27 @@ namespace mpp {
         std::array<unsigned char, 1 + sizeof(T)> _memory{0};
 
     public:
-        /**
-         * Wrap an object to optional
-         *
-         * @param t object
-         * @return wrapped optional
-         */
-        static optional<T> from(const T &t) {
-            return optional<T>(t);
-        }
-
-        /**
-         * Wrap an object to optional
-         *
-         * @param t object
-         * @return wrapped optional
-         */
-        static optional<T> from(T &&t) {
-            return optional<T>(std::forward<T>(t));
-        }
-
-        /**
-         * Construct and wrap an object to optional
-         *
-         * @tparam Args argument types
-         * @param args argument values
-         * @return wrapped optional
-         */
-        template <typename ...Args>
-        static optional<T> emplace(Args &&...args) {
-            return optional<T>(T{std::forward<Args>(args)...});
-        }
-
-        /**
-         * Wrap nullptr to optional
-         *
-         * @return wrapped optional
-         */
-        static optional<T> none() {
-            return optional<T>();
-        }
-
-    public:
         optional() = default;
 
-        explicit optional(const T &t) {
+        /*implicit*/ optional(optional_none_t) : optional() {}
+
+        /*implicit*/ optional(const T &t) {
             new(_memory.data() + 1) T(t);
             _memory[0] = static_cast<unsigned char>(true);
         }
 
-        explicit optional(T &&t) {
+        /*implicit*/ optional(T &&t) {
             new(_memory.data() + 1) T(std::forward<T>(t));
             _memory[0] = static_cast<unsigned char>(true);
         }
+
+        template <typename... Args>
+        constexpr explicit optional(mpp_in_place_type_t(T), Args &&... args)
+            : optional(T{std::forward<Args>(args)...}) {}
+
+        template <typename U, typename... Args>
+        constexpr explicit optional(mpp_in_place_type_t(T), std::initializer_list<U> il, Args &&... args)
+            : optional(T{il, std::forward<Args>(args)...}) {}
 
         optional(const optional<T> &other) {
             if (other.has_value()) {
@@ -277,6 +249,25 @@ namespace mpp {
         bool has_value() const {
             return static_cast<bool>(_memory[0]);
         }
+
+        operator bool() {
+            return has_value();
+        }
     };
+
+    template <typename T>
+    constexpr optional<typename std::decay<T>::type> some(T &&v) {
+        return optional<typename std::decay<T>::type>(std::forward<T>(v));
+    }
+
+    template <typename T, typename... Args>
+    constexpr optional<T> some(Args &&... args) {
+        return optional<T>(mpp_impl::in_place, std::forward<Args>(args)...);
+    }
+
+    template <typename T, typename U, typename... Args>
+    constexpr optional<T> some(std::initializer_list<U> il, Args &&... args) {
+        return optional<T>(mpp_impl::in_place, il, std::forward<Args>(args)...);
+    }
 }
 
