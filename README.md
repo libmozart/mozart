@@ -1,11 +1,17 @@
-# Mozart++ Template Library made with ❤️
+<div align="center">
 
-![Logo](./logo/libmozart.png)
-
+   <img width="160" src="./libmozart.jpg" alt="logo"></br>
+----
 [![Action Status](https://github.com/covariant-institute/mozart/workflows/build/badge.svg)](https://github.com/covariant-institute/mozart/actions)
 [![GitHub top language](https://img.shields.io/github/languages/top/covariant-institute/mozart.svg)](https://github.com/covariant-institute/mozart)
 [![license](https://img.shields.io/github/license/covariant-institute/mozart.svg?colorB=000000)](https://github.com/covariant-institute/mozart)
 
+Mozart++ Template Library
+</br>
+
+</div>
+
+# Mozart++ Template Library made with ❤️
 
 [English](./README.md)
 
