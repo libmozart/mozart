@@ -72,9 +72,10 @@ $ git submodule init
 $ git submodule add https://github.com/covmozart/mozart.git third-party/mozart
 ```
 
-Then, add the following line to your root `CMakeLists.txt`:
+Then, add the following lines to your root `CMakeLists.txt`:
 ```cmake
 add_subdirectory(third-party/mozart)
+include_directories(third-party/mozart)
 ```
 
 NOTICE: Do not forget to link `mozart++` to your target.
