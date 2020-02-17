@@ -7,7 +7,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macOS-latest]
+        os: [ubuntu-latest, windows-latest, macOS-latest]
 
     steps:
     - uses: actions/checkout@v1
@@ -17,5 +17,53 @@ jobs:
         mkdir build
         cd build
         cmake ..
-        cmake --build .
-        cmake --build . --target test
+        cmake --build . --config MinSizeRel
+
+    - name: run-tests
+      if: matrix.os == 'windows-latest'
+      run: |
+        cd build
+        cmake --build . --config MinSizeRel --target RUN_TESTS
+
+    - name: run-tests
+      if: matrix.os != 'windows-latest'
+      run: |
+        cd build
+        cmake --build . --config MinSizeRel --target test
+
+    - name: populate-artifact
+      if: matrix.os == 'windows-latest'
+      run: |
+        mkdir artifact
+        mkdir artifact\lib
+        mkdir artifact\include
+        xcopy /Y build\MinSizeRel\*.lib artifact\lib
+        xcopy /E /Y mozart++ artifact\include
+
+    - name: populate-artifact
+      if: matrix.os != 'windows-latest'
+      run: |
+        mkdir artifact
+        mkdir artifact/lib
+        mkdir artifact/include
+        cp build/*.a artifact/lib
+        cp -r mozart++ artifact/include
+
+    - uses: actions/upload-artifact@master
+      if: matrix.os == 'ubuntu-latest'
+      with:
+        name: mozart++-ubuntu
+        path: artifact
+
+    - uses: actions/upload-artifact@master
+      if: matrix.os == 'macOS-latest'
+      with:
+        name: mozart++-macos
+        path: artifact
+
+    - uses: actions/upload-artifact@master
+      if: matrix.os == 'windows-latest'
+      with:
+        name: mozart++-windows
+        path: artifact
+

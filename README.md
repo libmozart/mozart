@@ -27,7 +27,6 @@ Currently we have these tools listed below (ordered alphabetically):
   * `mpp::any`: A super effective `std::any`.
   * `mpp::allocator_type`: Memory allocator.
 * C
-  * `mpp::curry()`: Turn a normal C++ function into curried function.
   * `mpp::codecvt`: Wide string and string converter.
 * E
   * `mpp::event_emitter`: A NodeJS-like, non-invasive EventEmitter (two implementations):
