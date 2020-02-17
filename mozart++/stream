@@ -8,4 +8,4 @@
  * Github:  https://github.com/covariant-institute/
  */
 
-#include "foundation.cxx/stream.hpp"
+#include "mpp_foundation/stream.hpp"

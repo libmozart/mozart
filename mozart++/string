@@ -8,4 +8,4 @@
  * Github:  https://github.com/covariant-institute/
  */
 
-#include "string.cxx/string.hpp"
+#include "mpp_string/string.hpp"

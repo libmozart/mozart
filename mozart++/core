@@ -8,8 +8,8 @@
  * Github:  https://github.com/covariant-institute/
  */
 
-#include "core.cxx/base.hpp"
-#include "core.cxx/exception.hpp"
-#include "core.cxx/type_traits.hpp"
-#include "core.cxx/function.hpp"
-#include "core.cxx/event_emitter.hpp"
+#include "mpp_core/base.hpp"
+#include "mpp_core/exception.hpp"
+#include "mpp_core/type_traits.hpp"
+#include "mpp_core/function.hpp"
+#include "mpp_core/event_emitter.hpp"
