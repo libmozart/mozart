@@ -10,11 +10,20 @@
 [中文](./README-zh.md)
 
 ## What is Mozart++
-Mozart++ is a template library written in Modern C++ designed to make up for some missing tools in STL.
+Mozart++ is a cross-platform template library written in Modern C++ designed to make up for essential but missing components in STL.
 
 Mozart++ was born in our daily development. We usually build all kinds of "wheels" in a project, but the process is just so trivial, as a result, we decided to put these "wheels" out as a separate template library.
 
 Currently our project is written in C++14 because our main project which Mozart++ originally aimed to support was written in C++14.
+
+## Supported Compilers
+Compiler|Version|Tested Platform|Status
+:---:|:---:|:---:|:---:|
+gcc|8.1.0-x86_64|Ubuntu 18.04|:white_check_mark:
+gcc|7.4.0-x86_64|WSL Ubuntu 18.04|:white_check_mark:
+Apple Clang|11.0.0|macOS Catalina|:white_check_mark:
+mingw-gcc|8.1.0 (x86_64-posix-seh-rev0)|Windows 10 Pro 1903|:white_check_mark:
+msvc|19.24.28316|Windows 10 Pro 1903|:white_check_mark:
 
 ## Code Convension
 Mozart++ has two `namespace`s, `mpp` and `mpp_impl`.
@@ -36,10 +45,14 @@ Currently we have these tools listed below (ordered alphabetically):
   * `mpp::function`: An alias for `std::function`.
   * `mpp::function_parser`: A function type trait for extracting all information from a callable type.
   * `mpp::function_type`: An alias for parsed function type (aka `mpp::function`).
+  * `mpp::fdistream`: Wrap a C file descriptor and Windows File Handle into C++ std::istream.
+  * `mpp::fdostream`: Wrap a C file descriptor and Windows File Handle into C++ std::ostream.
 * I
   * `mpp::iterator_range`: A range adapter for a pair of iterators, wrapping two iterators into range-compatible interface.
 * O
   * `mpp::optional`: Something like `std::optional`
+* P
+  * `mpp::process`: Cross-platform process interacting library.
 * R
   * `mpp::runtime_error`: Customized runtime exception.
 * S
