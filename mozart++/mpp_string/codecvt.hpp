@@ -80,25 +80,21 @@ namespace mpp {
             std::u32string local2wide(const std::string &local) override {
                 std::u32string wide;
                 std::uint32_t head = 0;
-                int status = 0;
+                bool read_next = true;
                 for (auto it = local.begin(); it != local.end();) {
-                    switch (status) {
-                        case 0:
-                            head = *(it++);
-                            if (head & u8_blck_begin)
-                                status = 1;
-                            else
-                                wide.push_back(set_zero(head));
-                            break;
-                        case 1: {
-                            std::uint8_t tail = *(it++);
-                            wide.push_back(set_zero(head << 8 | tail));
-                            status = 0;
-                            break;
-                        }
+                    if (read_char) {
+                        head = *(it++);
+                        if (head & u8_blck_begin)
+                            read_next = false;
+                        else
+                            wide.push_back(set_zero(head));
+                    } else {
+                        std::uint8_t tail = *(it++);
+                        wide.push_back(set_zero(head << 8 | tail));
+                        read_next = true;
                     }
                 }
-                if (status == 1)
+                if (!read_next)
                     throw_ex<mpp::runtime_error>("Codecvt: Bad encoding.");
                 return std::move(wide);
             }
