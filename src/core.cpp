@@ -47,13 +47,12 @@ namespace mpp {
 
 namespace mpp {
     std::string cxx_demangle(const char *mangled) {
-        char buffer[1024] = {0};
-        size_t size = sizeof(buffer);
-        int status;
-        char *ret = abi::__cxa_demangle(mangled, buffer, &size, &status);
-        if (ret != nullptr)
-            return std::string(ret);
-        else
+        char *ptr = abi::__cxa_demangle(mangled, nullptr, nullptr, nullptr);
+        if (ptr) {
+            auto s = std::string(ptr);
+            std::free(ptr);
+            return std::move(s);
+        } else
             return mangled;
     }
 }
