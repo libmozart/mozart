@@ -6,8 +6,8 @@
  * Github:  https://github.com/covariant-institute/
  */
 
+#include <mozart++/core>
 #include <cstdio>
-#include <mozart++/core/typelist.hpp>
 
 int main() {
     using namespace mpp;

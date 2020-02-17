@@ -8,8 +8,7 @@
 
 #pragma once
 
-#include <mozart++/function>
-
+#include <mozart++/core>
 #include <vector>
 #include <deque>
 #include <list>

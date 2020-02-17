@@ -1,7 +1,0 @@
-// -*- C++ -*- forwarding header
-
-#include <mozart++/core/base.hpp>
-#include <mozart++/core/timer.hpp>
-#include <mozart++/core/any.hpp>
-#include <mozart++/string/string.hpp>
-#include <mozart++/string/codecvt.hpp>

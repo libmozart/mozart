@@ -1,11 +1,11 @@
 // -*- C++ -*- forwarding header
 
 /**
- * Mozart++ Template Library: Streams
+ * Mozart++ Template Library: Process
  * Licensed under MIT License
  * Copyright (c) 2020 Covariant Institute
  * Website: https://covariant.cn/
  * Github:  https://github.com/covariant-institute/
  */
 
-#include "mpp_foundation/stream.hpp"
+#include "mpp_system/process.hpp"

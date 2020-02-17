@@ -44,6 +44,7 @@ add_library(mozart++ STATIC
         ${SRCS}
         ${SRCS_IMPL}
         )
+
 set_target_properties(mozart++ PROPERTIES LINKER_LANGUAGE CXX)
 
 ## test and benchmark targets here

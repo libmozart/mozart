@@ -8,7 +8,7 @@
 
 #include <cstdio>
 #include <cstdlib>
-#include <mozart++/system/process.hpp>
+#include <mozart++/process>
 
 #ifdef MOZART_PLATFORM_WIN32
 #define SHELL "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"

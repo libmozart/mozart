@@ -8,5 +8,5 @@
 
 #pragma once
 
-#include <mozart++/core/base.hpp>
+#include <mozart++/core>
 

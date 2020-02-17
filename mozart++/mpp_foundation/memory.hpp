@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <mozart++/core/base.hpp>
+#include <mozart++/core>
 #include <memory>
 
 namespace mpp {

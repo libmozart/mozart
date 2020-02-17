@@ -6,7 +6,7 @@
  * Github:  https://github.com/covariant-institute/
  */
 
-#include <mozart++/event>
+#include <mozart++/core>
 #include <string>
 
 class REPL : public mpp::event_emitter {

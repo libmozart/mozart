@@ -1,5 +1,5 @@
 /**
- * Mozart++ Template Library
+ * Mozart++ Template Library: Core Library/Foundation Library
  * Licensed under MIT License
  * Copyright (c) 2020 Covariant Institute
  * Website: https://covariant.cn/
@@ -28,10 +28,10 @@
 #endif
 
 /**
- * Mozart++ Version: 19.12.1
+ * Mozart++ Version: 20.2.1
  */
 
-#define __Mozart 191201L
+#define __Mozart 200201L
 
 /**
  * Platform detection

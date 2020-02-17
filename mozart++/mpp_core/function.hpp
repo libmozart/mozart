@@ -1,5 +1,5 @@
 /**
- * Mozart++ Template Library
+ * Mozart++ Template Library: Core Library/Functional
  * Licensed under MIT License
  * Copyright (c) 2020 Covariant Institute
  * Website: https://covariant.cn/
@@ -8,8 +8,9 @@
 
 #pragma once
 
-#include <mozart++/core/base.hpp>
-#include <mozart++/core/typelist.hpp>
+#include "base.hpp"
+#include "type_traits.hpp"
+
 #include <functional>
 
 namespace mpp {

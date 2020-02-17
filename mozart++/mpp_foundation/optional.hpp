@@ -11,10 +11,11 @@
 #include <array>
 #include <utility>
 #include <functional>
-#include <mozart++/core/type_traits.hpp>
+#include <mozart++/core>
 
 namespace mpp {
-    struct optional_none_t {};
+    struct optional_none_t {
+    };
     static constexpr optional_none_t none{};
 
     template <typename T>
@@ -44,11 +45,11 @@ namespace mpp {
 
         template <typename... Args>
         constexpr explicit optional(mpp_in_place_type_t(T), Args &&... args)
-            : optional(T{std::forward<Args>(args)...}) {}
+                : optional(T{std::forward<Args>(args)...}) {}
 
         template <typename U, typename... Args>
         constexpr explicit optional(mpp_in_place_type_t(T), std::initializer_list<U> il, Args &&... args)
-            : optional(T{il, std::forward<Args>(args)...}) {}
+                : optional(T{il, std::forward<Args>(args)...}) {}
 
         optional(const optional<T> &other) {
             if (other.has_value()) {

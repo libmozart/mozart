@@ -8,9 +8,8 @@
 
 #pragma once
 
-#include <mozart++/core/base.hpp>
-#include <mozart++/core/exception.hpp>
-#include <mozart++/core/memory.hpp>
+#include <mozart++/core>
+#include <mozart++/memory>
 #include <typeindex>
 
 namespace mpp {
@@ -184,7 +183,6 @@ private:
     };
 
     stor_union m_data;
-
 
 
     /**

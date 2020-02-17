@@ -1,3 +1,11 @@
 // -*- C++ -*- forwarding header
 
-#include <mozart++/core/optional.hpp>
+/**
+ * Mozart++ Template Library: Optional
+ * Licensed under MIT License
+ * Copyright (c) 2020 Covariant Institute
+ * Website: https://covariant.cn/
+ * Github:  https://github.com/covariant-institute/
+ */
+
+#include "mpp_foundation/optional.hpp"
