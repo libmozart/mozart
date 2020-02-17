@@ -11,6 +11,7 @@
 #include <mozart++/core>
 #include <codecvt>
 #include <cwctype>
+#include <locale>
 #include <string>
 
 namespace mpp {
