@@ -136,6 +136,7 @@ namespace mpp_impl {
             }
             *p++ = '\0'; // block terminator
 
+            // ensure envs are copied correctly
             if (p != envs + env_size) {
                 delete[] envs;
                 mpp::throw_ex<mpp::runtime_error>("unable to copy environment variables");
