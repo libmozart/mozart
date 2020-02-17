@@ -69,7 +69,7 @@ First of all, open your terminal (or powershell, or cmd)
 ```bash
 $ cd /path/to/your/project
 $ git submodule init
-$ git submodule add https://github.com/covmozart/mozart.git third-party/mozart
+$ git submodule add https://github.com/libmozart/mozart.git third-party/mozart
 ```
 
 Then, add the following lines to your root `CMakeLists.txt`:

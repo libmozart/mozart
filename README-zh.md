@@ -69,7 +69,7 @@ Mozart++ 有两个 `namespace`, `mpp` 和 `mpp_impl`.
 ```bash
 $ cd /path/to/your/project
 $ git submodule init
-$ git submodule add https://github.com/covmozart/mozart.git third-party/mozart
+$ git submodule add https://github.com/libmozart/mozart.git third-party/mozart
 ```
 
 然后，添加下面这行到项目根目录下的 `CMakeLists.txt` 中:
