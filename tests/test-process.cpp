@@ -59,16 +59,14 @@ void test_stderr() {
 }
 
 void test_env() {
+#ifndef MOZART_PLATFORM_WIN32
     process p = process_builder().command(SHELL)
         .environment("VAR1", "fuck")
         .environment("VAR2", "cpp")
         .start();
 
-#ifdef MOZART_PLATFORM_WIN32
-    p.in() << "echo $env:VAR1" << std::endl;
-#else
     p.in() << "echo $VAR1$VAR2" << std::endl;
-#endif
+
     p.in() << "exit" << std::endl;
     p.wait_for();
 
@@ -79,6 +77,7 @@ void test_env() {
         printf("process: test-env: failed\n");
         exit(1);
     }
+#endif
 }
 
 void test_r_file() {
@@ -87,19 +86,16 @@ void test_r_file() {
     FILE *fout = fopen("output-all.txt", "w");
 
     process p = process_builder().command(SHELL)
-#ifdef MOZART_PLATFORM_WIN32
+#ifndef MOZART_PLATFORM_WIN32
         .arguments(std::vector<std::string>{"-NonInteractive"})
-#endif
         .environment("VAR", "fuckcpp")
+#endif
         .redirect_stdout(fileno(fout))
         .merge_outputs(true)
         .start();
 
-#ifdef MOZART_PLATFORM_WIN32
-    p.in() << "echo $env:VAR" << std::endl;
-#else
+
     p.in() << "echo $VAR" << std::endl;
-#endif
     p.in() << "exit" << std::endl;
     p.wait_for();
 
@@ -110,10 +106,17 @@ void test_r_file() {
     std::string s;
     fin >> s;
 
+#ifndef MOZART_PLATFORM_WIN32
     if (s != "fuckcpp") {
         printf("process: test-redirect-file: failed\n");
         exit(1);
     }
+#else
+    if (s != "Windows") {
+        printf("process: test-redirect-file: failed\n");
+        exit(1);
+    }
+#endif
 }
 
 void test_exit_code() {
