@@ -29,11 +29,6 @@
 
 #endif
 
-namespace mpp_impl {
-    static constexpr int PIPE_READ = 0;
-    static constexpr int PIPE_WRITE = 1;
-}
-
 namespace mpp {
 #ifdef _MSC_VER
     // On MSVC, ssize_t is SSIZE_T
@@ -83,20 +78,23 @@ namespace mpp {
         fd = FD_INVALID;
     }
 
+    static constexpr int PIPE_READ = 0;
+    static constexpr int PIPE_WRITE = 1;
+
     bool create_pipe(fd_type fds[2]) {
 #ifdef MOZART_PLATFORM_WIN32
         SECURITY_ATTRIBUTES sa;
         sa.nLength = sizeof(SECURITY_ATTRIBUTES);
         sa.bInheritHandle = true;
         sa.lpSecurityDescriptor = nullptr;
-        return CreatePipe(&fds[mpp_impl::PIPE_READ], &fds[mpp_impl::PIPE_WRITE], &sa, 0);
+        return CreatePipe(&fds[PIPE_READ], &fds[PIPE_WRITE], &sa, 0);
 #else
         return ::pipe(fds) == 0;
 #endif
     }
 
     void close_pipe(fd_type fds[2]) {
-        close_fd(fds[mpp_impl::PIPE_READ]);
-        close_fd(fds[mpp_impl::PIPE_WRITE]);
+        close_fd(fds[PIPE_READ]);
+        close_fd(fds[PIPE_WRITE]);
     }
 }

@@ -32,6 +32,8 @@ namespace mpp_impl {
     using mpp::close_fd;
     using mpp::close_pipe;
     using mpp::create_pipe;
+    using mpp::PIPE_READ;
+    using mpp::PIPE_WRITE;
 
     struct redirect_info {
         fd_type _target = FD_INVALID;
