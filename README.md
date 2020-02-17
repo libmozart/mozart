@@ -1,6 +1,6 @@
 <div align="center">
 
-   <img width="160" src="./logo/libmozart.jpg" alt="logo"></br>
+   <img width="160" src="https://covariant.cn/libmozart.png" alt="logo"></br>
 ----
 [![Action Status](https://github.com/covariant-institute/mozart/workflows/build/badge.svg)](https://github.com/covariant-institute/mozart/actions)
 [![GitHub top language](https://img.shields.io/github/languages/top/covariant-institute/mozart.svg)](https://github.com/covariant-institute/mozart)

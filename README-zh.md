@@ -1,13 +1,17 @@
-# Mozart++ Template Library made with ❤️
+<div align="center">
 
+   <img width="160" src="https://covariant.cn/libmozart.png" alt="logo"></br>
+----
 [![Action Status](https://github.com/covariant-institute/mozart/workflows/build/badge.svg)](https://github.com/covariant-institute/mozart/actions)
 [![GitHub top language](https://img.shields.io/github/languages/top/covariant-institute/mozart.svg)](https://github.com/covariant-institute/mozart)
 [![license](https://img.shields.io/github/license/covariant-institute/mozart.svg?colorB=000000)](https://github.com/covariant-institute/mozart)
 
+   <h1>Mozart++ Template Library made with ❤️</h1>
 
 [English](./README.md)
-
 [中文](./README-zh.md)
+
+</div>
 
 ## Mozart++ 是什么？
 Mozart++ 是一个用现代 C++ 写成的模版库，用来补足 STL 的短板。
