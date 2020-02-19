@@ -34,27 +34,18 @@ else ()
     endif ()
 endif ()
 
-include_directories(.)
+message(STATUS "[Mozart++]: including Core")
+add_subdirectory(mpp_core)
+include_directories(mpp_core)
 
-aux_source_directory(./mozart++ SRCS)
-aux_source_directory(./src SRCS_IMPL)
+message(STATUS "[Mozart++]: including Foundation")
+add_subdirectory(mpp_foundation)
+include_directories(mpp_foundation)
 
-## dummy target. DO NOT build this target directly or you will probably get an error.
-add_library(mozart++ STATIC
-        ${SRCS}
-        ${SRCS_IMPL}
-        )
+message(STATUS "[Mozart++]: including String")
+add_subdirectory(mpp_string)
+include_directories(mpp_string)
 
-set_target_properties(mozart++ PROPERTIES LINKER_LANGUAGE CXX)
-
-## test and benchmark targets here
-file(GLOB_RECURSE CPP_SRC_LIST tests/test-*.cpp)
-foreach (v ${CPP_SRC_LIST})
-    string(REGEX MATCH "tests/.*" relative_path ${v})
-    string(REGEX REPLACE "tests/" "" target_name ${relative_path})
-    string(REGEX REPLACE ".cpp" "" target_name ${target_name})
-
-    add_executable(${target_name} ${v})
-    target_link_libraries(${target_name} mozart++)
-    add_test(${target_name} ${target_name})
-endforeach ()
+message(STATUS "[Mozart++]: including System")
+add_subdirectory(mpp_system)
+include_directories(mpp_system)
