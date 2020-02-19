@@ -1,0 +1,12 @@
+[submodule "mpp_core"]
+	path = mpp_core
+	url = https://github.com/libmozart/core
+[submodule "mpp_foundation"]
+	path = mpp_foundation
+	url = https://github.com/libmozart/foundation
+[submodule "mpp_string"]
+	path = mpp_string
+	url = https://github.com/libmozart/string
+[submodule "mpp_system"]
+	path = mpp_system
+	url = https://github.com/libmozart/system
