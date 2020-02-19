@@ -67,7 +67,7 @@ Currently we have these tools listed below (ordered alphabetically):
   * `mpp::typelist`: Compile-time list holding types as its elements.
   * `mpp::throw_ex()`: Exception thrower which triggers global event emitter.
 
-## How to use Mozart++?
+## How to integrate Mozart++ into your project?
 #### For cmake-based project
 First of all, open your terminal (or powershell, or cmd)
 ```bash
@@ -91,6 +91,16 @@ target_link_libraries(<your-target> mozart++)
 #### For other build tools
 We are currently working on it. If you have any idea,
 feel free to create issues or pull requests.
+
+## How to build Mozart++ separately?
+```bash
+$ git clone --recursive https://github.com/libmozart/mozart.git
+$ cd mozart
+$ mkdir build
+$ cd build
+$ cmake .. && make
+$ make test
+```
 
 ## Demo
 * Event Emitter

@@ -92,6 +92,16 @@ target_link_libraries(<your-target> mozart++)
 目前我们正在让 Mozart++ 支持其他构建工具，如果您有任何建议，
 欢迎来提交 issue 或者 pull request
 
+## 如何单独编译 Mozart++?
+```bash
+$ git clone --recursive https://github.com/libmozart/mozart.git
+$ cd mozart
+$ mkdir build
+$ cd build
+$ cmake .. && make
+$ make test
+```
+
 ## 示例代码
 * Event Emitter
     ```cpp
