@@ -39,8 +39,7 @@ jobs:
           mkdir artifact
           mkdir artifact\lib
           mkdir artifact\include
-          xcopy /Y build\MinSizeRel\*.lib artifact\lib
-          xcopy /E /Y mozart++ artifact\include
+          echo "work in progress"
 
       - name: populate-artifact
         if: matrix.os != 'windows-latest'
