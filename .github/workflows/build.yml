@@ -48,8 +48,8 @@ jobs:
           mkdir artifact
           mkdir artifact/lib
           mkdir artifact/include
-          cp build/*.a artifact/lib
-          cp -r mozart++ artifact/include
+          find build -name "*.a" -type f -exec cp {} artifact/lib \;
+          for d in mpp_*; do cp -r $d/mozart++ artifact/include; done
 
       - uses: actions/upload-artifact@master
         if: matrix.os == 'ubuntu-latest'
