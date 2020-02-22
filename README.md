@@ -167,7 +167,7 @@ Contributions and ideas are welcomed through issues and PRs.
 [![](https://github.com/mikecovlee.png?size=50)](https://github.com/mikecovlee)
 [![](https://github.com/imkiva.png?size=50)](https://github.com/imkiva)
 
-## Credit
+## Acknowledge
 
 We would like to thank [JetBrains](https://www.jetbrains.com/?from=mozart++) for sharing free
 open-source licences of amazing tools such as [CLion](https://www.jetbrains.com/idea/?from=mozart++).
