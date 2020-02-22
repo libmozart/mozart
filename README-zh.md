@@ -167,6 +167,11 @@ $ make test
 [![](https://github.com/mikecovlee.png?size=50)](https://github.com/mikecovlee)
 [![](https://github.com/imkiva.png?size=50)](https://github.com/imkiva)
 
+## 鸣谢
+
+特别感谢 [JetBrains](https://www.jetbrains.com/?from=mozart++) 为开源项目提供免费的 [CLion](https://www.jetbrains.com/idea/?from=mozart++) 等 IDE 的授权
+[<img src="logo/jetbrains.png" width="200"/>](https://www.jetbrains.com/?from=mozart++)
+
 ## 开源协议
 ```
 MIT License
