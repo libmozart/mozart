@@ -170,7 +170,7 @@ Contributions and ideas are welcomed through issues and PRs.
 ## Acknowledge
 
 We would like to thank [JetBrains](https://www.jetbrains.com/?from=mozart++) for sharing free
-open-source licences of amazing tools such as [CLion](https://www.jetbrains.com/idea/?from=mozart++).
+open-source licences of amazing tools such as [CLion](https://www.jetbrains.com/clion/?from=mozart++).
 
 [<img src="logo/jetbrains.png" width="200"/>](https://www.jetbrains.com/?from=mozart++)
 

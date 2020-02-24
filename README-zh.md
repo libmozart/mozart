@@ -169,7 +169,8 @@ $ make test
 
 ## 鸣谢
 
-特别感谢 [JetBrains](https://www.jetbrains.com/?from=mozart++) 为开源项目提供免费的 [CLion](https://www.jetbrains.com/idea/?from=mozart++) 等 IDE 的授权
+特别感谢 [JetBrains](https://www.jetbrains.com/?from=mozart++) 为开源项目提供免费的 [CLion](https://www.jetbrains.com/clion/?from=mozart++) 等 IDE 的授权
+
 [<img src="logo/jetbrains.png" width="200"/>](https://www.jetbrains.com/?from=mozart++)
 
 ## 开源协议
