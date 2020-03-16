@@ -51,6 +51,7 @@ Mozart++ 有两个 `namespace`, `mpp` 和 `mpp_impl`.
   * `mpp::function_type`: 对使用函数类型萃取器得到的函数类型的别名 (即 `mpp::function`)
   * `mpp::fdistream`: 将 C 的文件描述符和 Windows 的文件句柄包装成 std::istream
   * `mpp::fdostream`: 将 C 的文件描述符和 Windows 的文件句柄包装成 std::ostream
+  * `mpp::format`: 像 Rust 一样好用的字符串格式化函数
 * I
   * `mpp::iterator_range`: 将 `iterator` 包装成支持 `ranged-for` 的对象
 * O
@@ -119,6 +120,15 @@ $ make test
     // some other places
     e.emit("player-login", username);
     e.emit("player-move", {1, 2}, {3, 4});
+    ```
+
+* Format
+    ```cpp
+    using mpp::format;
+    // format to string
+    auto str = mpp::format("Hello {}, welcome to C++\n", name);
+    // format to stream
+    mpp::format(std::cout, "Position {}\n", std::vector<int>{1, 2, 3});
     ```
 
 * Stream

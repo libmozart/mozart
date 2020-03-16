@@ -51,6 +51,7 @@ Currently we have these tools listed below (ordered alphabetically):
   * `mpp::function_type`: An alias for parsed function type (aka `mpp::function`).
   * `mpp::fdistream`: Wrap a C file descriptor and Windows File Handle into C++ std::istream.
   * `mpp::fdostream`: Wrap a C file descriptor and Windows File Handle into C++ std::ostream.
+  * `mpp::format`: Rust-like string formatter.
 * I
   * `mpp::iterator_range`: A range adapter for a pair of iterators, wrapping two iterators into range-compatible interface.
 * O
@@ -119,6 +120,15 @@ $ make test
     // some other places
     e.emit("player-login", username);
     e.emit("player-move", {1, 2}, {3, 4});
+    ```
+
+* Format
+    ```cpp
+    using mpp::format;
+    // format to string
+    auto str = mpp::format("Hello {}, welcome to C++\n", name);
+    // format to stream
+    mpp::format(std::cout, "Position {}\n", std::vector<int>{1, 2, 3});
     ```
 
 * Stream
